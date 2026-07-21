@@ -13,6 +13,14 @@ class TtsManager(context: Context) : TextToSpeech.OnInitListener {
     private var tts: TextToSpeech? = TextToSpeech(context, this)
     private var isInitialized = false
 
+    var isSpeechEnabled: Boolean = true
+        set(value) {
+            field = value
+            if (!value) {
+                stop()
+            }
+        }
+
     var speechRate: Float = 1.0f
         set(value) {
             field = value
@@ -40,6 +48,7 @@ class TtsManager(context: Context) : TextToSpeech.OnInitListener {
     }
 
     fun speak(text: String) {
+        if (!isSpeechEnabled) return
         if (!isInitialized) {
             Log.w(TAG, "TTS requested to speak before initialization finished")
             return

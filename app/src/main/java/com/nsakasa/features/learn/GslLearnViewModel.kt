@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.nsakasa.core.camera.HandLandmarkResult
 import com.nsakasa.core.ml.GestureClassifierInterface
 import com.nsakasa.core.ml.GestureResult
+import com.nsakasa.core.tts.TtsManager
 import com.nsakasa.features.learn.model.GslDataset
 import com.nsakasa.features.learn.model.GslSignItem
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GslLearnViewModel @Inject constructor(
-    private val gestureClassifier: GestureClassifierInterface
+    private val gestureClassifier: GestureClassifierInterface,
+    private val ttsManager: TtsManager
 ) : ViewModel() {
 
     // Tab Selection: 0 = Study Catalog & 3D Model, 1 = Hand Guess Practice Challenge
@@ -81,6 +83,10 @@ class GslLearnViewModel @Inject constructor(
     private var hasPassedCurrentChallenge = false
 
     init {
+        // Explicitly disable speech in Learn Mode so no gesture causes speech
+        ttsManager.stop()
+        ttsManager.isSpeechEnabled = false
+
         // Monitor live gesture recognition during Hand Guess Challenge
         viewModelScope.launch {
             gestureResult.collect { result ->
@@ -89,6 +95,15 @@ class GslLearnViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun onEnterLearnMode() {
+        ttsManager.stop()
+        ttsManager.isSpeechEnabled = false
+    }
+
+    fun onExitLearnMode() {
+        ttsManager.isSpeechEnabled = true
     }
 
     fun setSelectedTab(index: Int) {
@@ -150,6 +165,7 @@ class GslLearnViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
+        ttsManager.isSpeechEnabled = true
         gestureClassifier.close()
     }
 }
