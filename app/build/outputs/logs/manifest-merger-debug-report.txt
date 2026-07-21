@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:2:1-40:12
-INJECTED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:2:1-40:12
-INJECTED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:2:1-40:12
-INJECTED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:2:1-40:12
+ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:2:1-54:12
+INJECTED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:2:1-54:12
+INJECTED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:2:1-54:12
+INJECTED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:2:1-54:12
 MERGED from [androidx.camera:camera-video:1.3.4] /Users/dankwawadie/.gradle/caches/8.9/transforms/1513ceea5645ff6d4b560b93be9d6bea/transformed/camera-video-1.3.4/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.camera:camera-view:1.3.4] /Users/dankwawadie/.gradle/caches/8.9/transforms/7f77756145b8d261be264869031d0f26/transformed/camera-view-1.3.4/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.camera:camera-lifecycle:1.3.4] /Users/dankwawadie/.gradle/caches/8.9/transforms/107f71dda3596f39f0aebfc6cf89136c/transformed/camera-lifecycle-1.3.4/AndroidManifest.xml:2:1-7:12
@@ -112,21 +112,31 @@ uses-permission#android.permission.RECORD_AUDIO
 ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:7:5-71
 	android:name
 		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:7:22-68
+uses-permission#android.permission.INTERNET
+ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:8:5-67
+MERGED from [com.google.android.datatransport:transport-backend-cct:3.1.0] /Users/dankwawadie/.gradle/caches/8.9/transforms/72e2cc06d20f56ed190cc8dfed1f5d2e/transformed/transport-backend-cct-3.1.0/AndroidManifest.xml:26:5-67
+MERGED from [com.google.android.datatransport:transport-backend-cct:3.1.0] /Users/dankwawadie/.gradle/caches/8.9/transforms/72e2cc06d20f56ed190cc8dfed1f5d2e/transformed/transport-backend-cct-3.1.0/AndroidManifest.xml:26:5-67
+	android:name
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:8:22-64
+uses-permission#android.permission.REQUEST_INSTALL_PACKAGES
+ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:9:5-83
+	android:name
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:9:22-80
 uses-feature#android.hardware.camera
-ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:10:5-12:35
+ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:12:5-14:35
 	android:required
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:12:9-32
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:14:9-32
 	android:name
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:11:9-47
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:13:9-47
 uses-feature#android.hardware.camera.autofocus
-ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:13:5-15:36
+ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:15:5-17:36
 	android:required
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:15:9-33
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:17:9-33
 	android:name
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:14:9-57
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:16:9-57
 application
-ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:17:5-38:19
-INJECTED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:17:5-38:19
+ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:19:5-52:19
+INJECTED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:19:5-52:19
 MERGED from [androidx.camera:camera-camera2:1.3.4] /Users/dankwawadie/.gradle/caches/8.9/transforms/061151a50cd6e84bf1dedfb587b129e0/transformed/camera-camera2-1.3.4/AndroidManifest.xml:23:5-34:19
 MERGED from [androidx.camera:camera-camera2:1.3.4] /Users/dankwawadie/.gradle/caches/8.9/transforms/061151a50cd6e84bf1dedfb587b129e0/transformed/camera-camera2-1.3.4/AndroidManifest.xml:23:5-34:19
 MERGED from [androidx.camera:camera-core:1.3.4] /Users/dankwawadie/.gradle/caches/8.9/transforms/efee0bfb36ff3d74acfa73065b7e2a7e/transformed/camera-core-1.3.4/AndroidManifest.xml:23:5-34:19
@@ -164,43 +174,59 @@ MERGED from [com.google.android.odml:image:1.0.0-beta1] /Users/dankwawadie/.grad
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.13.1] /Users/dankwawadie/.gradle/caches/8.9/transforms/b5ea80b8a3748e76815e2bf1e62bbb9d/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:25:9-35
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:27:9-35
 	android:label
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:23:9-41
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:25:9-41
 	android:fullBackupContent
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:21:9-54
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:23:9-54
 	android:roundIcon
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:24:9-54
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:26:9-54
 	tools:targetApi
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:27:9-29
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:29:9-29
 	android:icon
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:22:9-43
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:24:9-43
 	android:allowBackup
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:19:9-35
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:21:9-35
 	android:theme
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:26:9-45
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:28:9-45
 	android:dataExtractionRules
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:20:9-65
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:22:9-65
 	android:name
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:18:9-35
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:20:9-35
 activity#com.nsakasa.MainActivity
-ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:29:9-37:20
+ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:31:9-39:20
 	android:exported
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:31:13-36
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:33:13-36
 	android:theme
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:32:13-49
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:34:13-49
 	android:name
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:30:13-41
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:32:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:33:13-36:29
+ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:35:13-38:29
 action#android.intent.action.MAIN
-ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:34:17-69
+ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:36:17-69
 	android:name
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:34:25-66
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:36:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:35:17-77
+ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:37:17-77
 	android:name
-		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:35:27-74
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:37:27-74
+provider#androidx.core.content.FileProvider
+ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:42:9-50:20
+	android:grantUriPermissions
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:46:13-47
+	android:authorities
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:44:13-55
+	android:exported
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:45:13-37
+	android:name
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:43:13-62
+meta-data#android.support.FILE_PROVIDER_PATHS
+ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:47:13-49:54
+	android:resource
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:49:17-51
+	android:name
+		ADDED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml:48:17-67
 uses-sdk
 INJECTED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /Volumes/Samsung_ssd/Desktop/NsaKasa_kotlin/app/src/main/AndroidManifest.xml
@@ -485,10 +511,6 @@ MERGED from [com.google.android.datatransport:transport-runtime:3.1.0] /Users/da
 MERGED from [com.google.android.datatransport:transport-runtime:3.1.0] /Users/dankwawadie/.gradle/caches/8.9/transforms/7017e1b9adbfa623727064fc930b0b8d/transformed/transport-runtime-3.1.0/AndroidManifest.xml:22:5-79
 	android:name
 		ADDED from [com.google.android.datatransport:transport-backend-cct:3.1.0] /Users/dankwawadie/.gradle/caches/8.9/transforms/72e2cc06d20f56ed190cc8dfed1f5d2e/transformed/transport-backend-cct-3.1.0/AndroidManifest.xml:25:22-76
-uses-permission#android.permission.INTERNET
-ADDED from [com.google.android.datatransport:transport-backend-cct:3.1.0] /Users/dankwawadie/.gradle/caches/8.9/transforms/72e2cc06d20f56ed190cc8dfed1f5d2e/transformed/transport-backend-cct-3.1.0/AndroidManifest.xml:26:5-67
-	android:name
-		ADDED from [com.google.android.datatransport:transport-backend-cct:3.1.0] /Users/dankwawadie/.gradle/caches/8.9/transforms/72e2cc06d20f56ed190cc8dfed1f5d2e/transformed/transport-backend-cct-3.1.0/AndroidManifest.xml:26:22-64
 service#com.google.android.datatransport.runtime.backends.TransportBackendDiscovery
 ADDED from [com.google.android.datatransport:transport-backend-cct:3.1.0] /Users/dankwawadie/.gradle/caches/8.9/transforms/72e2cc06d20f56ed190cc8dfed1f5d2e/transformed/transport-backend-cct-3.1.0/AndroidManifest.xml:29:9-35:19
 MERGED from [com.google.android.datatransport:transport-runtime:3.1.0] /Users/dankwawadie/.gradle/caches/8.9/transforms/7017e1b9adbfa623727064fc930b0b8d/transformed/transport-runtime-3.1.0/AndroidManifest.xml:36:9-38:40
