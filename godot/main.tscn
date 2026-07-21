@@ -1,7 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://nsakasa_godot_3d_avatar_002"]
+[gd_scene load_steps=3 format=3 uid="uid://nsakasa_godot_3d_avatar_003"]
 
 [ext_resource type="Script" path="res://Avatar3D.gd" id="1_avatar"]
-[ext_resource type="PackedScene" uid="uid://avatar_glb_001" path="res://avatar.glb" id="2_avatar_model"]
+[ext_resource type="PackedScene" uid="uid://avatar_glb_001" path="res://assets/3d_avatar/avatar.glb" id="2_avatar_model"]
 
 [node name="Main" type="Node3D"]
 

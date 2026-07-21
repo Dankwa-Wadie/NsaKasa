@@ -127,11 +127,12 @@ fun GodotScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    // Render 3D Avatar Pose in real time
-                    Hand3DVisualizer(
+                    // Render 3D Character Avatar (avatar.glb) in real time
+                    com.nsakasa.ui.components.Avatar3DVisualizer(
                         landmarks = currentLandmarks,
-                        modifier = Modifier.fillMaxSize(),
-                        autoRotate = true
+                        gestureName = state.currentGesture,
+                        isZoomedIn = isZoomedIn,
+                        modifier = Modifier.fillMaxSize()
                     )
 
                     // Top status overlay inside 3D viewport
