@@ -44,6 +44,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    androidResources {
+        noCompress += "tflite"
+    }
 }
 
 dependencies {
@@ -67,6 +70,10 @@ dependencies {
 
     // MediaPipe
     implementation(libs.mediapipe.tasks.vision)
+
+    // TensorFlow Lite
+    implementation(libs.tensorflow.lite)
+    implementation(libs.tensorflow.lite.support)
 
     // Hilt
     implementation(libs.hilt.android)

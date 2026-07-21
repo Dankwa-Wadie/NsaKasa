@@ -19,6 +19,7 @@ import dagger.hilt.processor.internal.definecomponent.codegen._dagger_hilt_andro
 import dagger.hilt.processor.internal.definecomponent.codegen._dagger_hilt_components_SingletonComponent;
 import hilt_aggregated_deps._com_nsakasa_MainActivity_GeneratedInjector;
 import hilt_aggregated_deps._com_nsakasa_NsaKasaApp_GeneratedInjector;
+import hilt_aggregated_deps._com_nsakasa_di_MlModule;
 import hilt_aggregated_deps._com_nsakasa_features_cameratranslate_CameraTranslateViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_nsakasa_features_cameratranslate_CameraTranslateViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._dagger_hilt_android_flags_FragmentGetContextFix_FragmentGetContextFixEntryPoint;
@@ -63,6 +64,7 @@ import hilt_aggregated_deps._dagger_hilt_android_internal_modules_HiltWrapper_Ac
     aggregatedDeps = {
         _com_nsakasa_MainActivity_GeneratedInjector.class,
         _com_nsakasa_NsaKasaApp_GeneratedInjector.class,
+        _com_nsakasa_di_MlModule.class,
         _com_nsakasa_features_cameratranslate_CameraTranslateViewModel_HiltModules_BindsModule.class,
         _com_nsakasa_features_cameratranslate_CameraTranslateViewModel_HiltModules_KeyModule.class,
         _dagger_hilt_android_flags_FragmentGetContextFix_FragmentGetContextFixEntryPoint.class,
