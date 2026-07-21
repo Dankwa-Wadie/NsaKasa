@@ -13,16 +13,18 @@
     </style>
 </head>
 <body>
-    <div id="loading">⚡ Loading 3D Mesh Avatar (avatar.glb)...</div>
+    <div id="loading">⚡ Loading 3D Avatar & FBX Movements...</div>
     <div id="canvas-container"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
     <script>
         let scene, camera, renderer, model, controls;
-        let isZoomedIn = false;
+        let mixer, idleAction, waveAction;
         let clock = new THREE.Clock();
 
         function init() {
@@ -56,15 +58,15 @@
             controls.enableDamping = true;
             controls.target.set(0, 1.0, 0);
 
-            // Load actual 3D avatar.glb model file
-            const loader = new THREE.GLTFLoader();
-            loader.load('avatar.glb', function (gltf) {
+            // Load 3D avatar.glb model file from Avatar folder
+            const gltfLoader = new THREE.GLTFLoader();
+            gltfLoader.load('avatar.glb', function (gltf) {
                 const loadingElem = document.getElementById('loading');
                 if (loadingElem) loadingElem.style.display = 'none';
                 
                 model = gltf.scene;
                 
-                // Auto-center and scale model
+                // Auto-center model
                 const box = new THREE.Box3().setFromObject(model);
                 const size = box.getSize(new THREE.Vector3());
                 const center = box.getCenter(new THREE.Vector3());
@@ -74,12 +76,30 @@
 
                 scene.add(model);
 
-                // Initial friendly waving greeting
-                setTimeout(waveHand, 1200);
+                // Setup Animation Mixer
+                mixer = new THREE.AnimationMixer(model);
+
+                // Load Breathing Idle.fbx movement from Avatar folder
+                const fbxLoader = new THREE.FBXLoader();
+                fbxLoader.load('Breathing Idle.fbx', function (fbx) {
+                    if (fbx.animations.length > 0) {
+                        idleAction = mixer.clipAction(fbx.animations[0]);
+                        idleAction.play();
+                    }
+                });
+
+                // Load Waving Gesture.fbx movement from Avatar folder
+                fbxLoader.load('Waving Gesture.fbx', function (fbx) {
+                    if (fbx.animations.length > 0) {
+                        waveAction = mixer.clipAction(fbx.animations[0]);
+                        // Play initial wave greeting after 1.5 seconds
+                        setTimeout(waveHand, 1500);
+                    }
+                });
 
                 animate();
             }, undefined, function (error) {
-                console.error('An error occurred loading avatar.glb:', error);
+                console.error('Error loading avatar.glb:', error);
                 const loadingElem = document.getElementById('loading');
                 if (loadingElem) loadingElem.innerText = 'Error loading 3D avatar.glb model';
             });
@@ -95,19 +115,15 @@
 
         function animate() {
             requestAnimationFrame(animate);
-            const time = clock.getElapsedTime();
-
-            if (model) {
-                // Real 3D Idle Breathing Motion
-                model.position.y = (model.position.y || 0) + Math.sin(time * 2) * 0.001;
-            }
-
+            const delta = clock.getDelta();
+            
+            if (mixer) mixer.update(delta);
+            
             controls.update();
             renderer.render(scene, camera);
         }
 
         function zoomToHands(zoomIn) {
-            isZoomedIn = zoomIn;
             const targetY = zoomIn ? 1.25 : 1.0;
             const targetZ = zoomIn ? 1.1 : 2.8;
 
@@ -127,18 +143,14 @@
         }
 
         function waveHand() {
-            if (!model) return;
-            let startTime = performance.now();
-            function waveStep(now) {
-                let elapsed = (now - startTime) / 1000;
-                if (elapsed < 1.8) {
-                    model.rotation.y = Math.sin(elapsed * 10) * 0.2;
-                    requestAnimationFrame(waveStep);
-                } else {
-                    model.rotation.y = 0;
-                }
+            if (waveAction) {
+                if (idleAction) idleAction.fadeOut(0.3);
+                waveAction.reset().fadeIn(0.3).play();
+                setTimeout(() => {
+                    waveAction.fadeOut(0.3);
+                    if (idleAction) idleAction.reset().fadeIn(0.3).play();
+                }, 2200);
             }
-            requestAnimationFrame(waveStep);
         }
 
         init();
