@@ -1,15 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://nsakasa_godot_3d_avatar_001"]
+[gd_scene load_steps=3 format=3 uid="uid://nsakasa_godot_3d_avatar_002"]
 
 [ext_resource type="Script" path="res://Avatar3D.gd" id="1_avatar"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_1"]
-radius = 0.4
-height = 1.8
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
-albedo_color = Color(0.18, 0.52, 0.92, 1.0)
-roughness = 0.4
-metallic = 0.2
+[ext_resource type="PackedScene" uid="uid://avatar_glb_001" path="res://avatar.glb" id="2_avatar_model"]
 
 [node name="Main" type="Node3D"]
 
@@ -18,19 +10,17 @@ transform = Transform3D(0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, -0.75
 shadow_enabled = true
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.5, 3.5)
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.2, 2.8)
 current = true
 
 [node name="Avatar3D" type="Node3D" parent="."]
 script = ExtResource("1_avatar")
 
-[node name="AvatarMesh" type="MeshInstance3D" parent="Avatar3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
-mesh = SubResource("CapsuleMesh_1")
-surface_material_override/0 = SubResource("StandardMaterial3D_1")
+[node name="AvatarModelInstance" parent="Avatar3D" instance=ExtResource("2_avatar_model")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="StatusLabel" type="Label3D" parent="Avatar3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
-text = "NsaKasa 3D Avatar Ready"
-font_size = 32
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0)
+text = "NsaKasa 3D Custom Avatar Active"
+font_size = 30
 outline_size = 8
