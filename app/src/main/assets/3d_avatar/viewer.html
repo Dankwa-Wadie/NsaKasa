@@ -9,42 +9,40 @@
         #loading {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             color: #facc15; font-family: sans-serif; font-weight: bold; font-size: 15px; text-align: center;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
-    <div id="loading">⚡ Loading 3D Avatar & Human Hands guide...</div>
+    <div id="loading">⚡ Loading 3D Avatar & Interactive Godot Hands...</div>
     <div id="canvas-container"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Offline Local Three.js Dependencies -->
+    <script src="js/three.min.js"></script>
+    <script src="js/fflate.min.js"></script>
+    <script src="js/GLTFLoader.js"></script>
+    <script src="js/FBXLoader.js"></script>
+    <script src="js/OrbitControls.js"></script>
 
     <script>
-        let scene, camera, renderer, controls;
-        let fullAvatarModel = null;
-        let leftHandModel = null, rightHandModel = null;
-        let groundPedestal = null;
-        let mixer, idleAction, waveAction;
-        let waveIntervalTimer = null;
-        let clock = new THREE.Clock();
-        let currentMode = 'FULL_BODY';
+        // Use var for hoisting to prevent TDZ ReferenceErrors during Android launch
+        var scene, camera, renderer, controls;
+        var fullAvatarModel = null;
+        var leftHandModel = null, rightHandModel = null;
+        var groundPedestal = null;
+        var mixer, idleAction, waveAction;
+        var waveIntervalTimer = null;
+        var clock = new THREE.Clock();
+        var currentMode = 'FULL_BODY';
         
-        // Store finger joint references for dynamic postures
-        let leftJoints = {}, rightJoints = {};
+        var leftJoints = {}, rightJoints = {};
         
-        // Dynamic Loop State
-        let loopPhase = 'IDLE'; // 'IDLE', 'TRANSITION_TO_SIGN', 'HOLD_SIGN', 'TRANSITION_TO_IDLE'
-        let phaseTime = 0.0;
-        let activeGesture = "OPEN_PALM";
+        var loopPhase = 'IDLE';
+        var phaseTime = 0.0;
+        var activeGesture = "OPEN_PALM";
         
-        // Joint target rotation states for interpolation
-        let currentLeftRotations = {};
-        let currentRightRotations = {};
+        var isScriptInitialized = false;
 
-        // Detailed finger joints rotation mapping for GSL Signs
         const GSL_SIGN_POSTURES = {
             "OPEN_PALM": { thumb: 0.1, index: 0.1, middle: 0.1, ring: 0.1, pinky: 0.1 },
             "CLOSED_FIST": { thumb: 1.3, index: 1.3, middle: 1.3, ring: 1.3, pinky: 1.3 },
@@ -116,13 +114,13 @@
             ringMesh.position.set(0, 0.035, 0);
             scene.add(ringMesh);
 
-            // 1. Build Two Beautifully Sculpted Rigged 3D Human Hands (Left & Right)
+            // Build Two Beautifully Sculpted Rigged 3D Human Hands (Left & Right)
             buildHumanHands();
 
             const gltfLoader = new THREE.GLTFLoader();
             const fbxLoader = new THREE.FBXLoader();
 
-            // 2. Load 3D Full Body Avatar (avatar.glb)
+            // Load 3D Full Body Avatar (avatar.glb)
             gltfLoader.load('avatar.glb', function (gltf) {
                 const loadingElem = document.getElementById('loading');
                 if (loadingElem) loadingElem.style.display = 'none';
@@ -163,25 +161,26 @@
                     }
                 }, 10000);
 
+                isScriptInitialized = true;
                 animate();
             }, undefined, function (error) {
                 console.error('Error loading avatar.glb:', error);
+                const loadingElem = document.getElementById('loading');
+                if (loadingElem) loadingElem.innerText = 'Offline 3D Scene Active';
+                isScriptInitialized = true;
+                animate();
             });
 
             window.addEventListener('resize', onWindowResize);
         }
 
-        // Construct two organic-looking human hands with warm skin tones and smoothed mesh shapes
         function buildHumanHands() {
-            // Organic Warm Human Skin Material
             const skinMaterial = new THREE.MeshStandardMaterial({
-                color: 0xe2a884, // Warm natural human skin tone
+                color: 0xe2a884,
                 roughness: 0.65,
-                metalness: 0.08,
-                bumpScale: 0.02
+                metalness: 0.08
             });
 
-            // Joint Highlight Materials (Cyan Accent joints)
             const jointMaterial = new THREE.MeshStandardMaterial({
                 color: 0x38bdf8,
                 roughness: 0.2,
@@ -191,21 +190,17 @@
             function buildSingleHand(isRight) {
                 const handGroup = new THREE.Group();
                 const jointsMap = {};
-
                 const sideSign = isRight ? 1 : -1;
 
-                // Sculpted Palm mesh (Beveled Box)
                 const palmGeo = new THREE.BoxGeometry(0.32, 0.38, 0.09);
                 const palmMesh = new THREE.Mesh(palmGeo, skinMaterial);
                 handGroup.add(palmMesh);
 
-                // Wrist base
                 const wristGeo = new THREE.CylinderGeometry(0.09, 0.11, 0.2, 16);
                 const wristMesh = new THREE.Mesh(wristGeo, skinMaterial);
                 wristMesh.position.set(0, -0.28, 0);
                 handGroup.add(wristMesh);
 
-                // Helper to add finger with natural joints
                 function addFinger(name, posX, startY, scaleFactor) {
                     const segments = [];
                     let parentNode = handGroup;
@@ -220,14 +215,12 @@
                         const jointNode = new THREE.Group();
                         jointNode.position.set(posX * sideSign, i === 0 ? currentY : lengths[i - 1], 0);
 
-                        // Organic smooth joint node
                         const jointSphere = new THREE.Mesh(
                             new THREE.SphereGeometry(0.038, 16, 16),
                             jointMaterial
                         );
                         jointNode.add(jointSphere);
 
-                        // Soft organic finger bone cylinder
                         const boneGeo = new THREE.CylinderGeometry(0.025, 0.022, lengths[i], 16);
                         boneGeo.translate(0, lengths[i] / 2.0, 0);
                         const boneMesh = new THREE.Mesh(boneGeo, skinMaterial);
@@ -237,13 +230,12 @@
                         parentNode = jointNode;
                         segments.push(jointNode);
 
-                        posX = 0; // Align child joints directly above parent joint
+                        posX = 0;
                     }
 
                     jointsMap[name] = segments;
                 }
 
-                // Attach 5 fingers with custom sizing
                 addFinger('thumb', 0.18, 0.0, 0.95);
                 addFinger('index', 0.12, 0.2, 1.0);
                 addFinger('middle', 0.04, 0.22, 1.05);
@@ -253,7 +245,6 @@
                 return { group: handGroup, joints: jointsMap };
             }
 
-            // Create Left Hand
             const leftData = buildSingleHand(false);
             leftHandModel = leftData.group;
             leftJoints = leftData.joints;
@@ -261,7 +252,6 @@
             leftHandModel.visible = false;
             scene.add(leftHandModel);
 
-            // Create Right Hand
             const rightData = buildSingleHand(true);
             rightHandModel = rightData.group;
             rightJoints = rightData.joints;
@@ -270,7 +260,6 @@
             scene.add(rightHandModel);
         }
 
-        // Applies looping transitions between idle and target GSL poses
         function updateLoopingHandAnimations(delta) {
             phaseTime += delta;
 
@@ -279,7 +268,6 @@
 
             const targetPose = GSL_SIGN_POSTURES[activeGesture] || GSL_SIGN_POSTURES["OPEN_PALM"];
 
-            // 1. Looping State Machine
             if (loopPhase === 'IDLE') {
                 targetLeft = IDLE_RELAXED;
                 targetRight = IDLE_RELAXED;
@@ -312,7 +300,6 @@
                 }
             }
 
-            // 2. Apply computed target rotations to Left & Right Hand models
             applyPostureToHand(leftJoints, targetLeft);
             applyPostureToHand(rightJoints, targetRight);
         }
@@ -352,11 +339,8 @@
             
             if (mixer && currentMode === 'FULL_BODY') mixer.update(delta);
             
-            // Loop transitions for Left & Right Hands when zoomed in
             if (currentMode === 'ARMS') {
                 updateLoopingHandAnimations(delta);
-                
-                // Breath-like rotation offsets on hands for organic feel
                 if (leftHandModel) leftHandModel.rotation.y = Math.sin(clock.getElapsedTime() * 1.5) * 0.1;
                 if (rightHandModel) rightHandModel.rotation.y = -Math.sin(clock.getElapsedTime() * 1.5) * 0.1;
             }
@@ -365,7 +349,8 @@
             renderer.render(scene, camera);
         }
 
-        function zoomToHands(zoomIn) {
+        // Attach APIs directly to window to prevent ReferenceErrors during dynamic execution from Kotlin
+        window.zoomToHands = function(zoomIn) {
             currentMode = zoomIn ? 'ARMS' : 'FULL_BODY';
 
             if (zoomIn) {
@@ -375,7 +360,6 @@
                 if (leftHandModel) leftHandModel.visible = true;
                 if (rightHandModel) rightHandModel.visible = true;
                 
-                // Reset looping sign animation
                 loopPhase = 'IDLE';
                 phaseTime = 0.0;
                 
@@ -390,16 +374,15 @@
                 camera.position.set(0, 1.2, 3.0);
                 controls.target.set(0, 1.0, 0);
             }
-        }
+        };
 
-        function setGesture(gestureName) {
+        window.setGesture = function(gestureName) {
             activeGesture = gestureName;
-            // Force morph restart on new sign selection
             loopPhase = 'TRANSITION_TO_SIGN';
             phaseTime = 0.0;
-        }
+        };
 
-        function waveHand() {
+        window.waveHand = function() {
             if (waveAction && currentMode === 'FULL_BODY') {
                 if (idleAction) idleAction.fadeOut(0.3);
                 waveAction.reset().fadeIn(0.3).play();
@@ -408,7 +391,7 @@
                     if (idleAction) idleAction.reset().fadeIn(0.3).play();
                 }, 2200);
             }
-        }
+        };
 
         init();
     </script>

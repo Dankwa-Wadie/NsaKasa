@@ -6,6 +6,10 @@ import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 
@@ -19,16 +23,22 @@ fun GlbAvatarView(
     gestureName: String,
     modifier: Modifier = Modifier
 ) {
-    var webViewInstance: WebView? = null
+    var webViewInstance by remember { mutableStateOf<WebView?>(null) }
+    var isPageLoaded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isZoomedIn) {
-        webViewInstance?.evaluateJavascript("zoomToHands($isZoomedIn);", null)
+    // Evaluate JavaScript safely only after the page has finished loading
+    LaunchedEffect(isPageLoaded, isZoomedIn) {
+        if (isPageLoaded) {
+            webViewInstance?.evaluateJavascript("if (window.zoomToHands) { window.zoomToHands($isZoomedIn); }", null)
+        }
     }
 
-    LaunchedEffect(gestureName) {
-        webViewInstance?.evaluateJavascript("setGesture('$gestureName');", null)
-        if (gestureName == "AKWAABA" || gestureName == "WAVE") {
-            webViewInstance?.evaluateJavascript("waveHand();", null)
+    LaunchedEffect(isPageLoaded, gestureName) {
+        if (isPageLoaded) {
+            webViewInstance?.evaluateJavascript("if (window.setGesture) { window.setGesture('$gestureName'); }", null)
+            if (gestureName == "AKWAABA" || gestureName == "WAVE") {
+                webViewInstance?.evaluateJavascript("if (window.waveHand) { window.waveHand(); }", null)
+            }
         }
     }
 
@@ -36,7 +46,12 @@ fun GlbAvatarView(
         modifier = modifier.fillMaxSize(),
         factory = { context ->
             WebView(context).apply {
-                webViewClient = WebViewClient()
+                webViewClient = object : WebViewClient() {
+                    override fun onPageFinished(view: WebView?, url: String?) {
+                        super.onPageFinished(view, url)
+                        isPageLoaded = true
+                    }
+                }
                 settings.apply {
                     javaScriptEnabled = true
                     domStorageEnabled = true
@@ -52,7 +67,9 @@ fun GlbAvatarView(
         },
         update = { webView ->
             webViewInstance = webView
-            webView.evaluateJavascript("zoomToHands($isZoomedIn);", null)
+            if (isPageLoaded) {
+                webView.evaluateJavascript("if (window.zoomToHands) { window.zoomToHands($isZoomedIn); }", null)
+            }
         }
     )
 }
