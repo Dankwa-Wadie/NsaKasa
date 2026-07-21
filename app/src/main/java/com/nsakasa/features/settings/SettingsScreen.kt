@@ -201,15 +201,6 @@ fun SettingsScreen(
                     color = HighContrastWhite,
                     lineHeight = 22.sp
                 )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Text(
-                    text = "Architecture Phase 7 Ready: MediaPipe landmark stream Flow<HandLandmarkResult> is decoupled for future Godot Skeleton3D/Bone3D JNI bridge embedding.",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-                    lineHeight = 20.sp
-                )
             }
         }
     }
