@@ -1,10 +1,12 @@
 package com.nsakasa.features.cameratranslate;
 
+import com.nsakasa.core.ml.GestureClassifierInterface;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
 import dagger.internal.QualifierMetadata;
 import dagger.internal.ScopeMetadata;
 import javax.annotation.processing.Generated;
+import javax.inject.Provider;
 
 @ScopeMetadata
 @QualifierMetadata
@@ -21,20 +23,24 @@ import javax.annotation.processing.Generated;
     "cast"
 })
 public final class CameraTranslateViewModel_Factory implements Factory<CameraTranslateViewModel> {
+  private final Provider<GestureClassifierInterface> gestureClassifierProvider;
+
+  public CameraTranslateViewModel_Factory(
+      Provider<GestureClassifierInterface> gestureClassifierProvider) {
+    this.gestureClassifierProvider = gestureClassifierProvider;
+  }
+
   @Override
   public CameraTranslateViewModel get() {
-    return newInstance();
+    return newInstance(gestureClassifierProvider.get());
   }
 
-  public static CameraTranslateViewModel_Factory create() {
-    return InstanceHolder.INSTANCE;
+  public static CameraTranslateViewModel_Factory create(
+      Provider<GestureClassifierInterface> gestureClassifierProvider) {
+    return new CameraTranslateViewModel_Factory(gestureClassifierProvider);
   }
 
-  public static CameraTranslateViewModel newInstance() {
-    return new CameraTranslateViewModel();
-  }
-
-  private static final class InstanceHolder {
-    private static final CameraTranslateViewModel_Factory INSTANCE = new CameraTranslateViewModel_Factory();
+  public static CameraTranslateViewModel newInstance(GestureClassifierInterface gestureClassifier) {
+    return new CameraTranslateViewModel(gestureClassifier);
   }
 }

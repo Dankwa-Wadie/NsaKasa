@@ -1,7 +1,6 @@
 package com.nsakasa.features.cameratranslate
 
 import android.Manifest
-import android.content.Context
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -11,15 +10,20 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -29,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.semantics.contentDescription
@@ -46,7 +51,11 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.nsakasa.core.camera.HandTrackingAnalyzer
 import com.nsakasa.ui.components.LandmarkOverlay
 import com.nsakasa.ui.theme.DarkBackground
+import com.nsakasa.ui.theme.DarkSurface
+import com.nsakasa.ui.theme.HighContrastCyan
+import com.nsakasa.ui.theme.HighContrastGreen
 import com.nsakasa.ui.theme.HighContrastYellow
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -55,6 +64,7 @@ fun CameraTranslateScreen(
 ) {
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
     val landmarkResult by viewModel.landmarkResult.collectAsState()
+    val gestureResult by viewModel.gestureResult.collectAsState()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -131,7 +141,7 @@ fun CameraTranslateScreen(
                 modifier = Modifier.fillMaxSize()
             )
 
-            // Status Banner / Top Header for visual confirmation & accessibility
+            // Status Banner / Top Header for hand tracking feedback
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -140,20 +150,101 @@ fun CameraTranslateScreen(
                     .padding(16.dp)
             ) {
                 val detectedCount = landmarkResult?.hands?.size ?: 0
-                Text(
-                    text = if (detectedCount > 0) "Tracking: $detectedCount hand(s) detected" else "Nsa Kasa: Place hands in view",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = HighContrastYellow,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .semantics {
-                            contentDescription = "Hand tracking status indicator"
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = if (detectedCount > 0) "Tracking: $detectedCount hand(s)" else "Nsa Kasa: Place hands in view",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = HighContrastYellow,
+                        modifier = Modifier.semantics {
+                            contentDescription = "Hand tracking status"
                         }
-                )
+                    )
+                    if (gestureResult.isFake) {
+                        Surface(
+                            color = HighContrastCyan,
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(
+                                text = "MOCK MODE",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = DarkBackground,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+                }
             }
+
+            // Bottom Classification Card (WCAG AA High Contrast Subtitle Display)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(DarkSurface)
+                    .padding(20.dp)
+                    .semantics {
+                        contentDescription = "Recognized sign language gesture display"
+                    }
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "RECOGNIZED GSL GESTURE",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = HighContrastCyan,
+                        letterSpacing = 1.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = gestureResult.label,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = HighContrastYellow,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 36.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    val confidencePercent = (gestureResult.confidence * 100).roundToInt()
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Confidence: $confidencePercent%",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = HighContrastGreen
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        LinearProgressIndicator(
+                            progress = { gestureResult.confidence },
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(8.dp)
+                                .clip(RoundedCornerShape(4.dp)),
+                            color = HighContrastGreen,
+                            trackColor = DarkBackground
+                        )
+                    }
+                }
+            }
+
         } else {
-            // Permission Request UI with accessibility compliant touch target & text
+            // Permission Request UI
             Column(
                 modifier = Modifier
                     .fillMaxSize()

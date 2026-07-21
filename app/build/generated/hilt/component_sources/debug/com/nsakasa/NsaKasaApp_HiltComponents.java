@@ -1,5 +1,6 @@
 package com.nsakasa;
 
+import com.nsakasa.di.MlModule;
 import com.nsakasa.features.cameratranslate.CameraTranslateViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
@@ -127,6 +128,7 @@ public final class NsaKasaApp_HiltComponents {
       modules = {
           ApplicationContextModule.class,
           HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
+          MlModule.class,
           ActivityRetainedCBuilderModule.class,
           ServiceCBuilderModule.class
       }

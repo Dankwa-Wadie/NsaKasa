@@ -3,6 +3,8 @@ package com.nsakasa.features.cameratranslate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nsakasa.core.camera.HandLandmarkResult
+import com.nsakasa.core.ml.GestureClassifierInterface
+import com.nsakasa.core.ml.GestureResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,10 +13,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CameraTranslateViewModel @Inject constructor() : ViewModel() {
+class CameraTranslateViewModel @Inject constructor(
+    private val gestureClassifier: GestureClassifierInterface
+) : ViewModel() {
 
     private val _landmarkResult = MutableStateFlow<HandLandmarkResult?>(null)
     val landmarkResult: StateFlow<HandLandmarkResult?> = _landmarkResult.asStateFlow()
+
+    val gestureResult: StateFlow<GestureResult> = gestureClassifier.gestureResultFlow
 
     private val _isPermissionGranted = MutableStateFlow(false)
     val isPermissionGranted: StateFlow<Boolean> = _isPermissionGranted.asStateFlow()
@@ -22,10 +28,16 @@ class CameraTranslateViewModel @Inject constructor() : ViewModel() {
     fun updateLandmarkResult(result: HandLandmarkResult) {
         viewModelScope.launch {
             _landmarkResult.emit(result)
+            gestureClassifier.processLandmarks(result)
         }
     }
 
     fun setPermissionGranted(granted: Boolean) {
         _isPermissionGranted.value = granted
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        gestureClassifier.close()
     }
 }
