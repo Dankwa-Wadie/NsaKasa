@@ -2,10 +2,13 @@ package com.nsakasa;
 
 import com.nsakasa.di.DatabaseModule;
 import com.nsakasa.di.MlModule;
+import com.nsakasa.di.OtaModule;
 import com.nsakasa.di.SttModule;
 import com.nsakasa.di.TtsModule;
 import com.nsakasa.features.cameratranslate.CameraTranslateViewModel_HiltModules;
 import com.nsakasa.features.conversationlog.ConversationLogViewModel_HiltModules;
+import com.nsakasa.features.godot.GodotViewModel_HiltModules;
+import com.nsakasa.features.learn.GslLearnViewModel_HiltModules;
 import com.nsakasa.features.settings.SettingsViewModel_HiltModules;
 import com.nsakasa.features.speechtranslate.SpeechTranslateViewModel_HiltModules;
 import dagger.Binds;
@@ -138,6 +141,7 @@ public final class NsaKasaApp_HiltComponents {
           MlModule.class,
           ActivityRetainedCBuilderModule.class,
           ServiceCBuilderModule.class,
+          OtaModule.class,
           SttModule.class,
           TtsModule.class
       }
@@ -164,6 +168,8 @@ public final class NsaKasaApp_HiltComponents {
       modules = {
           CameraTranslateViewModel_HiltModules.KeyModule.class,
           ConversationLogViewModel_HiltModules.KeyModule.class,
+          GodotViewModel_HiltModules.KeyModule.class,
+          GslLearnViewModel_HiltModules.KeyModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
           ActivityCBuilderModule.class,
@@ -207,6 +213,8 @@ public final class NsaKasaApp_HiltComponents {
       modules = {
           CameraTranslateViewModel_HiltModules.BindsModule.class,
           ConversationLogViewModel_HiltModules.BindsModule.class,
+          GodotViewModel_HiltModules.BindsModule.class,
+          GslLearnViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
           SettingsViewModel_HiltModules.BindsModule.class,
           SpeechTranslateViewModel_HiltModules.BindsModule.class

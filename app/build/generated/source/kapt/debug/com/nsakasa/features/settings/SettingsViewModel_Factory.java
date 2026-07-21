@@ -1,5 +1,6 @@
 package com.nsakasa.features.settings;
 
+import com.nsakasa.core.ota.OtaUpdateManager;
 import com.nsakasa.core.tts.TtsDebouncer;
 import com.nsakasa.core.tts.TtsManager;
 import dagger.internal.DaggerGenerated;
@@ -28,23 +29,29 @@ public final class SettingsViewModel_Factory implements Factory<SettingsViewMode
 
   private final Provider<TtsDebouncer> ttsDebouncerProvider;
 
+  private final Provider<OtaUpdateManager> otaUpdateManagerProvider;
+
   public SettingsViewModel_Factory(Provider<TtsManager> ttsManagerProvider,
-      Provider<TtsDebouncer> ttsDebouncerProvider) {
+      Provider<TtsDebouncer> ttsDebouncerProvider,
+      Provider<OtaUpdateManager> otaUpdateManagerProvider) {
     this.ttsManagerProvider = ttsManagerProvider;
     this.ttsDebouncerProvider = ttsDebouncerProvider;
+    this.otaUpdateManagerProvider = otaUpdateManagerProvider;
   }
 
   @Override
   public SettingsViewModel get() {
-    return newInstance(ttsManagerProvider.get(), ttsDebouncerProvider.get());
+    return newInstance(ttsManagerProvider.get(), ttsDebouncerProvider.get(), otaUpdateManagerProvider.get());
   }
 
   public static SettingsViewModel_Factory create(Provider<TtsManager> ttsManagerProvider,
-      Provider<TtsDebouncer> ttsDebouncerProvider) {
-    return new SettingsViewModel_Factory(ttsManagerProvider, ttsDebouncerProvider);
+      Provider<TtsDebouncer> ttsDebouncerProvider,
+      Provider<OtaUpdateManager> otaUpdateManagerProvider) {
+    return new SettingsViewModel_Factory(ttsManagerProvider, ttsDebouncerProvider, otaUpdateManagerProvider);
   }
 
-  public static SettingsViewModel newInstance(TtsManager ttsManager, TtsDebouncer ttsDebouncer) {
-    return new SettingsViewModel(ttsManager, ttsDebouncer);
+  public static SettingsViewModel newInstance(TtsManager ttsManager, TtsDebouncer ttsDebouncer,
+      OtaUpdateManager otaUpdateManager) {
+    return new SettingsViewModel(ttsManager, ttsDebouncer, otaUpdateManager);
   }
 }

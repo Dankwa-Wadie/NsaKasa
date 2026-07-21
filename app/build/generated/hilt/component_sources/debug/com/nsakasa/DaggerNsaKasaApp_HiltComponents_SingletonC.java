@@ -10,13 +10,16 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.nsakasa.core.data.AppDatabase;
 import com.nsakasa.core.data.ConversationDao;
+import com.nsakasa.core.godot.GodotBridgePlugin;
 import com.nsakasa.core.ml.GestureClassifierInterface;
+import com.nsakasa.core.ota.OtaUpdateManager;
 import com.nsakasa.core.stt.SttManager;
 import com.nsakasa.core.tts.TtsDebouncer;
 import com.nsakasa.core.tts.TtsManager;
 import com.nsakasa.di.DatabaseModule_ProvideAppDatabaseFactory;
 import com.nsakasa.di.DatabaseModule_ProvideConversationDaoFactory;
 import com.nsakasa.di.MlModule_ProvideGestureClassifierFactory;
+import com.nsakasa.di.OtaModule_ProvideOtaUpdateManagerFactory;
 import com.nsakasa.di.SttModule_ProvideSttManagerFactory;
 import com.nsakasa.di.TtsModule_ProvideTtsDebouncerFactory;
 import com.nsakasa.di.TtsModule_ProvideTtsManagerFactory;
@@ -24,6 +27,10 @@ import com.nsakasa.features.cameratranslate.CameraTranslateViewModel;
 import com.nsakasa.features.cameratranslate.CameraTranslateViewModel_HiltModules;
 import com.nsakasa.features.conversationlog.ConversationLogViewModel;
 import com.nsakasa.features.conversationlog.ConversationLogViewModel_HiltModules;
+import com.nsakasa.features.godot.GodotViewModel;
+import com.nsakasa.features.godot.GodotViewModel_HiltModules;
+import com.nsakasa.features.learn.GslLearnViewModel;
+import com.nsakasa.features.learn.GslLearnViewModel_HiltModules;
 import com.nsakasa.features.settings.SettingsViewModel;
 import com.nsakasa.features.settings.SettingsViewModel_HiltModules;
 import com.nsakasa.features.speechtranslate.SpeechTranslateViewModel;
@@ -386,7 +393,7 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
 
     @Override
     public Map<Class<?>, Boolean> getViewModelKeys() {
-      return LazyClassKeyMap.<Boolean>of(ImmutableMap.<String, Boolean>of(LazyClassKeyProvider.com_nsakasa_features_cameratranslate_CameraTranslateViewModel, CameraTranslateViewModel_HiltModules.KeyModule.provide(), LazyClassKeyProvider.com_nsakasa_features_conversationlog_ConversationLogViewModel, ConversationLogViewModel_HiltModules.KeyModule.provide(), LazyClassKeyProvider.com_nsakasa_features_settings_SettingsViewModel, SettingsViewModel_HiltModules.KeyModule.provide(), LazyClassKeyProvider.com_nsakasa_features_speechtranslate_SpeechTranslateViewModel, SpeechTranslateViewModel_HiltModules.KeyModule.provide()));
+      return LazyClassKeyMap.<Boolean>of(ImmutableMap.<String, Boolean>builderWithExpectedSize(6).put(LazyClassKeyProvider.com_nsakasa_features_cameratranslate_CameraTranslateViewModel, CameraTranslateViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_nsakasa_features_conversationlog_ConversationLogViewModel, ConversationLogViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_nsakasa_features_godot_GodotViewModel, GodotViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_nsakasa_features_learn_GslLearnViewModel, GslLearnViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_nsakasa_features_settings_SettingsViewModel, SettingsViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_nsakasa_features_speechtranslate_SpeechTranslateViewModel, SpeechTranslateViewModel_HiltModules.KeyModule.provide()).build());
     }
 
     @Override
@@ -406,25 +413,35 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
-      static String com_nsakasa_features_cameratranslate_CameraTranslateViewModel = "com.nsakasa.features.cameratranslate.CameraTranslateViewModel";
+      static String com_nsakasa_features_conversationlog_ConversationLogViewModel = "com.nsakasa.features.conversationlog.ConversationLogViewModel";
 
       static String com_nsakasa_features_speechtranslate_SpeechTranslateViewModel = "com.nsakasa.features.speechtranslate.SpeechTranslateViewModel";
 
+      static String com_nsakasa_features_godot_GodotViewModel = "com.nsakasa.features.godot.GodotViewModel";
+
+      static String com_nsakasa_features_learn_GslLearnViewModel = "com.nsakasa.features.learn.GslLearnViewModel";
+
       static String com_nsakasa_features_settings_SettingsViewModel = "com.nsakasa.features.settings.SettingsViewModel";
 
-      static String com_nsakasa_features_conversationlog_ConversationLogViewModel = "com.nsakasa.features.conversationlog.ConversationLogViewModel";
+      static String com_nsakasa_features_cameratranslate_CameraTranslateViewModel = "com.nsakasa.features.cameratranslate.CameraTranslateViewModel";
 
       @KeepFieldType
-      CameraTranslateViewModel com_nsakasa_features_cameratranslate_CameraTranslateViewModel2;
+      ConversationLogViewModel com_nsakasa_features_conversationlog_ConversationLogViewModel2;
 
       @KeepFieldType
       SpeechTranslateViewModel com_nsakasa_features_speechtranslate_SpeechTranslateViewModel2;
 
       @KeepFieldType
+      GodotViewModel com_nsakasa_features_godot_GodotViewModel2;
+
+      @KeepFieldType
+      GslLearnViewModel com_nsakasa_features_learn_GslLearnViewModel2;
+
+      @KeepFieldType
       SettingsViewModel com_nsakasa_features_settings_SettingsViewModel2;
 
       @KeepFieldType
-      ConversationLogViewModel com_nsakasa_features_conversationlog_ConversationLogViewModel2;
+      CameraTranslateViewModel com_nsakasa_features_cameratranslate_CameraTranslateViewModel2;
     }
   }
 
@@ -438,6 +455,10 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
     private Provider<CameraTranslateViewModel> cameraTranslateViewModelProvider;
 
     private Provider<ConversationLogViewModel> conversationLogViewModelProvider;
+
+    private Provider<GodotViewModel> godotViewModelProvider;
+
+    private Provider<GslLearnViewModel> gslLearnViewModelProvider;
 
     private Provider<SettingsViewModel> settingsViewModelProvider;
 
@@ -458,13 +479,15 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
         final ViewModelLifecycle viewModelLifecycleParam) {
       this.cameraTranslateViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
       this.conversationLogViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
-      this.settingsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
-      this.speechTranslateViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
+      this.godotViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
+      this.gslLearnViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
+      this.settingsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 4);
+      this.speechTranslateViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 5);
     }
 
     @Override
     public Map<Class<?>, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(ImmutableMap.<String, javax.inject.Provider<ViewModel>>of(LazyClassKeyProvider.com_nsakasa_features_cameratranslate_CameraTranslateViewModel, ((Provider) cameraTranslateViewModelProvider), LazyClassKeyProvider.com_nsakasa_features_conversationlog_ConversationLogViewModel, ((Provider) conversationLogViewModelProvider), LazyClassKeyProvider.com_nsakasa_features_settings_SettingsViewModel, ((Provider) settingsViewModelProvider), LazyClassKeyProvider.com_nsakasa_features_speechtranslate_SpeechTranslateViewModel, ((Provider) speechTranslateViewModelProvider)));
+      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(ImmutableMap.<String, javax.inject.Provider<ViewModel>>builderWithExpectedSize(6).put(LazyClassKeyProvider.com_nsakasa_features_cameratranslate_CameraTranslateViewModel, ((Provider) cameraTranslateViewModelProvider)).put(LazyClassKeyProvider.com_nsakasa_features_conversationlog_ConversationLogViewModel, ((Provider) conversationLogViewModelProvider)).put(LazyClassKeyProvider.com_nsakasa_features_godot_GodotViewModel, ((Provider) godotViewModelProvider)).put(LazyClassKeyProvider.com_nsakasa_features_learn_GslLearnViewModel, ((Provider) gslLearnViewModelProvider)).put(LazyClassKeyProvider.com_nsakasa_features_settings_SettingsViewModel, ((Provider) settingsViewModelProvider)).put(LazyClassKeyProvider.com_nsakasa_features_speechtranslate_SpeechTranslateViewModel, ((Provider) speechTranslateViewModelProvider)).build());
     }
 
     @Override
@@ -474,25 +497,35 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
-      static String com_nsakasa_features_speechtranslate_SpeechTranslateViewModel = "com.nsakasa.features.speechtranslate.SpeechTranslateViewModel";
-
       static String com_nsakasa_features_cameratranslate_CameraTranslateViewModel = "com.nsakasa.features.cameratranslate.CameraTranslateViewModel";
-
-      static String com_nsakasa_features_conversationlog_ConversationLogViewModel = "com.nsakasa.features.conversationlog.ConversationLogViewModel";
 
       static String com_nsakasa_features_settings_SettingsViewModel = "com.nsakasa.features.settings.SettingsViewModel";
 
-      @KeepFieldType
-      SpeechTranslateViewModel com_nsakasa_features_speechtranslate_SpeechTranslateViewModel2;
+      static String com_nsakasa_features_learn_GslLearnViewModel = "com.nsakasa.features.learn.GslLearnViewModel";
+
+      static String com_nsakasa_features_conversationlog_ConversationLogViewModel = "com.nsakasa.features.conversationlog.ConversationLogViewModel";
+
+      static String com_nsakasa_features_speechtranslate_SpeechTranslateViewModel = "com.nsakasa.features.speechtranslate.SpeechTranslateViewModel";
+
+      static String com_nsakasa_features_godot_GodotViewModel = "com.nsakasa.features.godot.GodotViewModel";
 
       @KeepFieldType
       CameraTranslateViewModel com_nsakasa_features_cameratranslate_CameraTranslateViewModel2;
 
       @KeepFieldType
+      SettingsViewModel com_nsakasa_features_settings_SettingsViewModel2;
+
+      @KeepFieldType
+      GslLearnViewModel com_nsakasa_features_learn_GslLearnViewModel2;
+
+      @KeepFieldType
       ConversationLogViewModel com_nsakasa_features_conversationlog_ConversationLogViewModel2;
 
       @KeepFieldType
-      SettingsViewModel com_nsakasa_features_settings_SettingsViewModel2;
+      SpeechTranslateViewModel com_nsakasa_features_speechtranslate_SpeechTranslateViewModel2;
+
+      @KeepFieldType
+      GodotViewModel com_nsakasa_features_godot_GodotViewModel2;
     }
 
     private static final class SwitchingProvider<T> implements Provider<T> {
@@ -522,10 +555,16 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
           case 1: // com.nsakasa.features.conversationlog.ConversationLogViewModel 
           return (T) new ConversationLogViewModel(singletonCImpl.provideConversationDaoProvider.get());
 
-          case 2: // com.nsakasa.features.settings.SettingsViewModel 
-          return (T) new SettingsViewModel(singletonCImpl.provideTtsManagerProvider.get(), singletonCImpl.provideTtsDebouncerProvider.get());
+          case 2: // com.nsakasa.features.godot.GodotViewModel 
+          return (T) new GodotViewModel(singletonCImpl.godotBridgePluginProvider.get());
 
-          case 3: // com.nsakasa.features.speechtranslate.SpeechTranslateViewModel 
+          case 3: // com.nsakasa.features.learn.GslLearnViewModel 
+          return (T) new GslLearnViewModel(singletonCImpl.provideGestureClassifierProvider.get(), singletonCImpl.provideTtsManagerProvider.get());
+
+          case 4: // com.nsakasa.features.settings.SettingsViewModel 
+          return (T) new SettingsViewModel(singletonCImpl.provideTtsManagerProvider.get(), singletonCImpl.provideTtsDebouncerProvider.get(), singletonCImpl.provideOtaUpdateManagerProvider.get());
+
+          case 5: // com.nsakasa.features.speechtranslate.SpeechTranslateViewModel 
           return (T) new SpeechTranslateViewModel(singletonCImpl.provideSttManagerProvider.get(), singletonCImpl.provideConversationDaoProvider.get());
 
           default: throw new AssertionError(id);
@@ -618,6 +657,10 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
 
     private Provider<ConversationDao> provideConversationDaoProvider;
 
+    private Provider<GodotBridgePlugin> godotBridgePluginProvider;
+
+    private Provider<OtaUpdateManager> provideOtaUpdateManagerProvider;
+
     private Provider<SttManager> provideSttManagerProvider;
 
     private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
@@ -633,7 +676,9 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
       this.provideTtsDebouncerProvider = DoubleCheck.provider(new SwitchingProvider<TtsDebouncer>(singletonCImpl, 1));
       this.provideAppDatabaseProvider = DoubleCheck.provider(new SwitchingProvider<AppDatabase>(singletonCImpl, 4));
       this.provideConversationDaoProvider = DoubleCheck.provider(new SwitchingProvider<ConversationDao>(singletonCImpl, 3));
-      this.provideSttManagerProvider = DoubleCheck.provider(new SwitchingProvider<SttManager>(singletonCImpl, 5));
+      this.godotBridgePluginProvider = DoubleCheck.provider(new SwitchingProvider<GodotBridgePlugin>(singletonCImpl, 5));
+      this.provideOtaUpdateManagerProvider = DoubleCheck.provider(new SwitchingProvider<OtaUpdateManager>(singletonCImpl, 6));
+      this.provideSttManagerProvider = DoubleCheck.provider(new SwitchingProvider<SttManager>(singletonCImpl, 7));
     }
 
     @Override
@@ -684,7 +729,13 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
           case 4: // com.nsakasa.core.data.AppDatabase 
           return (T) DatabaseModule_ProvideAppDatabaseFactory.provideAppDatabase(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 5: // com.nsakasa.core.stt.SttManager 
+          case 5: // com.nsakasa.core.godot.GodotBridgePlugin 
+          return (T) new GodotBridgePlugin();
+
+          case 6: // com.nsakasa.core.ota.OtaUpdateManager 
+          return (T) OtaModule_ProvideOtaUpdateManagerFactory.provideOtaUpdateManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 7: // com.nsakasa.core.stt.SttManager 
           return (T) SttModule_ProvideSttManagerFactory.provideSttManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);

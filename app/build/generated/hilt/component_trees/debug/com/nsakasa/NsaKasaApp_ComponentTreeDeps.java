@@ -21,12 +21,17 @@ import hilt_aggregated_deps._com_nsakasa_MainActivity_GeneratedInjector;
 import hilt_aggregated_deps._com_nsakasa_NsaKasaApp_GeneratedInjector;
 import hilt_aggregated_deps._com_nsakasa_di_DatabaseModule;
 import hilt_aggregated_deps._com_nsakasa_di_MlModule;
+import hilt_aggregated_deps._com_nsakasa_di_OtaModule;
 import hilt_aggregated_deps._com_nsakasa_di_SttModule;
 import hilt_aggregated_deps._com_nsakasa_di_TtsModule;
 import hilt_aggregated_deps._com_nsakasa_features_cameratranslate_CameraTranslateViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_nsakasa_features_cameratranslate_CameraTranslateViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._com_nsakasa_features_conversationlog_ConversationLogViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_nsakasa_features_conversationlog_ConversationLogViewModel_HiltModules_KeyModule;
+import hilt_aggregated_deps._com_nsakasa_features_godot_GodotViewModel_HiltModules_BindsModule;
+import hilt_aggregated_deps._com_nsakasa_features_godot_GodotViewModel_HiltModules_KeyModule;
+import hilt_aggregated_deps._com_nsakasa_features_learn_GslLearnViewModel_HiltModules_BindsModule;
+import hilt_aggregated_deps._com_nsakasa_features_learn_GslLearnViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._com_nsakasa_features_settings_SettingsViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_nsakasa_features_settings_SettingsViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._com_nsakasa_features_speechtranslate_SpeechTranslateViewModel_HiltModules_BindsModule;
@@ -75,12 +80,17 @@ import hilt_aggregated_deps._dagger_hilt_android_internal_modules_HiltWrapper_Ac
         _com_nsakasa_NsaKasaApp_GeneratedInjector.class,
         _com_nsakasa_di_DatabaseModule.class,
         _com_nsakasa_di_MlModule.class,
+        _com_nsakasa_di_OtaModule.class,
         _com_nsakasa_di_SttModule.class,
         _com_nsakasa_di_TtsModule.class,
         _com_nsakasa_features_cameratranslate_CameraTranslateViewModel_HiltModules_BindsModule.class,
         _com_nsakasa_features_cameratranslate_CameraTranslateViewModel_HiltModules_KeyModule.class,
         _com_nsakasa_features_conversationlog_ConversationLogViewModel_HiltModules_BindsModule.class,
         _com_nsakasa_features_conversationlog_ConversationLogViewModel_HiltModules_KeyModule.class,
+        _com_nsakasa_features_godot_GodotViewModel_HiltModules_BindsModule.class,
+        _com_nsakasa_features_godot_GodotViewModel_HiltModules_KeyModule.class,
+        _com_nsakasa_features_learn_GslLearnViewModel_HiltModules_BindsModule.class,
+        _com_nsakasa_features_learn_GslLearnViewModel_HiltModules_KeyModule.class,
         _com_nsakasa_features_settings_SettingsViewModel_HiltModules_BindsModule.class,
         _com_nsakasa_features_settings_SettingsViewModel_HiltModules_KeyModule.class,
         _com_nsakasa_features_speechtranslate_SpeechTranslateViewModel_HiltModules_BindsModule.class,

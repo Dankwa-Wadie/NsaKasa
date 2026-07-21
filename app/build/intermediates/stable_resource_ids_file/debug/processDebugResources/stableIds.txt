@@ -2,6 +2,7 @@ com.nsakasa:xml/data_extraction_rules = 0x7f100001
 com.nsakasa:styleable/View = 0x7f0f0033
 com.nsakasa:styleable/TextAppearance = 0x7f0f0031
 com.nsakasa:styleable/StateListDrawable = 0x7f0f002e
+com.nsakasa:xml/file_paths = 0x7f100002
 com.nsakasa:styleable/Spinner = 0x7f0f002d
 com.nsakasa:styleable/PreviewView = 0x7f0f002a
 com.nsakasa:styleable/NavInclude = 0x7f0f0026
