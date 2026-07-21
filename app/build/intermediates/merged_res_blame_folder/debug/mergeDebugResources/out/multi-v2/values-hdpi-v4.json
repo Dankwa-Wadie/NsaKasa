@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.nsakasa.app-mergeDebugResources-61:/values-hdpi-v4/values-hdpi-v4.xml",
+            "outputFile": "com.nsakasa.app-mergeDebugResources-65:/values-hdpi-v4/values-hdpi-v4.xml",
             "map": [
                 {
-                    "source": "/Users/dankwawadie/.gradle/caches/8.9/transforms/92917747861d1c66a6e3460222d46612/transformed/appcompat-1.1.0/res/values-hdpi-v4/values-hdpi-v4.xml",
+                    "source": "/Users/dankwawadie/.gradle/caches/8.9/transforms/6cc9bfbd39f305e34cc94d0cfb915a06/transformed/appcompat-1.1.0/res/values-hdpi-v4/values-hdpi-v4.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

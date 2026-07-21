@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.nsakasa.features.cameratranslate.CameraTranslateScreen
+import com.nsakasa.ui.navigation.NsaKasaNavGraph
 import com.nsakasa.ui.theme.DarkBackground
 import com.nsakasa.ui.theme.NsaKasaTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = DarkBackground
                 ) {
-                    CameraTranslateScreen()
+                    NsaKasaNavGraph()
                 }
             }
         }
