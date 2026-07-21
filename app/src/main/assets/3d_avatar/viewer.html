@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-    <div id="loading">⚡ Loading 3D Avatar, Pedestal & Rigged Arms...</div>
+    <div id="loading">⚡ Loading 3D Avatar & Interactive Godot Hands...</div>
     <div id="canvas-container"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -25,12 +25,26 @@
     <script>
         let scene, camera, renderer, controls;
         let fullAvatarModel = null;
-        let armsModel = null;
+        let riggedHandModel = null;
         let groundPedestal = null;
         let mixer, idleAction, waveAction;
         let waveIntervalTimer = null;
         let clock = new THREE.Clock();
         let currentMode = 'FULL_BODY';
+        let fingerJoints = {}; // Store references to finger joint meshes for dynamic posture flexing
+
+        // Detailed finger joints rotation mapping for GSL Signs
+        const GSL_SIGN_POSTURES = {
+            "OPEN_PALM": { thumb: 0, index: 0, middle: 0, ring: 0, pinky: 0 },
+            "CLOSED_FIST": { thumb: 1.4, index: 1.4, middle: 1.4, ring: 1.4, pinky: 1.4 },
+            "POINTING": { thumb: 1.4, index: 0, middle: 1.4, ring: 1.4, pinky: 1.4 },
+            "THUMBS_UP": { thumb: 0, index: 1.4, middle: 1.4, ring: 1.4, pinky: 1.4 },
+            "AKWAABA": { thumb: 0.2, index: 0.2, middle: 0.2, ring: 0.2, pinky: 0.2 },
+            "THANK_YOU": { thumb: 0, index: 0, middle: 0, ring: 0, pinky: 0 },
+            "LETTER_A": { thumb: 0.4, index: 1.4, middle: 1.4, ring: 1.4, pinky: 1.4 },
+            "LETTER_B": { thumb: 1.4, index: 0, middle: 0, ring: 0, pinky: 0 },
+            "LETTER_C": { thumb: 0.7, index: 0.7, middle: 0.7, ring: 0.7, pinky: 0.7 }
+        };
 
         function init() {
             const container = document.getElementById('canvas-container');
@@ -53,10 +67,6 @@
             fillLight.position.set(-3, 3, -3);
             scene.add(fillLight);
 
-            const bottomLight = new THREE.DirectionalLight(0xfacc15, 0.8);
-            bottomLight.position.set(0, -2, 2);
-            scene.add(bottomLight);
-
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
@@ -67,7 +77,7 @@
             controls.enableDamping = true;
             controls.target.set(0, 1.0, 0);
 
-            // 1. Stable Ground Pedestal Placeholder Platform
+            // Stable Ground Pedestal Placeholder Platform
             const pedestalGeo = new THREE.CylinderGeometry(0.85, 0.95, 0.06, 32);
             const pedestalMat = new THREE.MeshStandardMaterial({
                 color: 0x1e293b,
@@ -89,9 +99,11 @@
             ringMesh.position.set(0, 0.035, 0);
             scene.add(ringMesh);
 
+            // 1. Build Interactive Rigged 3D Hand Model (Three.js bones/joints)
+            createRigged3DHand();
+
             const gltfLoader = new THREE.GLTFLoader();
             const fbxLoader = new THREE.FBXLoader();
-            const textureLoader = new THREE.TextureLoader();
 
             // 2. Load 3D Full Body Avatar (avatar.glb)
             gltfLoader.load('avatar.glb', function (gltf) {
@@ -124,7 +136,6 @@
                 fbxLoader.load('Waving Gesture.fbx', function (fbx) {
                     if (fbx.animations.length > 0) {
                         waveAction = mixer.clipAction(fbx.animations[0]);
-                        // Initial wave greeting after 1.5 seconds
                         setTimeout(waveHand, 1500);
                     }
                 });
@@ -142,48 +153,109 @@
                 console.error('Error loading avatar.glb:', error);
             });
 
-            // 3. Load Fully Rigged 3D Arms (arms/arms.fbx)
-            const armAlbedo = textureLoader.load('arms/Textures/T_arms_A.png');
-            const armNormal = textureLoader.load('arms/Textures/T_arms_N.png');
+            window.addEventListener('resize', onWindowResize);
+        }
 
-            fbxLoader.load('arms/arms.fbx', function (fbx) {
-                armsModel = fbx;
-                
-                // Center and scale arms model perfectly for close-up inspection
-                const box = new THREE.Box3().setFromObject(armsModel);
-                const size = box.getSize(new THREE.Vector3());
-                const center = box.getCenter(new THREE.Vector3());
-                
-                armsModel.position.sub(center);
-                
-                // Auto-scale to fit viewport nicely
-                const maxDim = Math.max(size.x, size.y, size.z);
-                if (maxDim > 0) {
-                    const targetScale = 1.0 / maxDim;
-                    armsModel.scale.set(targetScale, targetScale, targetScale);
+        // Construct a highly visible, rigged 3D sign hand with joint controls
+        function createRigged3DHand() {
+            riggedHandModel = new THREE.Group();
+            riggedHandModel.position.set(0, 0.6, 0);
+
+            // Palm base mesh (Golden Metallic Cybernetic Finish)
+            const palmGeo = new THREE.BoxGeometry(0.35, 0.4, 0.08);
+            const palmMat = new THREE.MeshStandardMaterial({
+                color: 0xfacc15,
+                metalness: 0.8,
+                roughness: 0.2
+            });
+            const palmMesh = new THREE.Mesh(palmGeo, palmMat);
+            riggedHandModel.add(palmMesh);
+
+            // Wrist Connector
+            const wristGeo = new THREE.CylinderGeometry(0.1, 0.12, 0.2, 16);
+            const wristMat = new THREE.MeshStandardMaterial({
+                color: 0x38bdf8,
+                metalness: 0.9,
+                roughness: 0.1
+            });
+            const wristMesh = new THREE.Mesh(wristGeo, wristMat);
+            wristMesh.position.set(0, -0.3, 0);
+            riggedHandModel.add(wristMesh);
+
+            // Helper to build a rigged finger with 3 segments (MCP, PIP, DIP joints)
+            function addRiggedFinger(name, posX, startY, scaleFactor) {
+                const joints = [];
+                let parentNode = riggedHandModel;
+                let currentY = startY;
+
+                // Segment dimensions
+                const lengthMCP = 0.14 * scaleFactor;
+                const lengthPIP = 0.11 * scaleFactor;
+                const lengthDIP = 0.08 * scaleFactor;
+                const lengths = [lengthMCP, lengthPIP, lengthDIP];
+
+                for (let i = 0; i < 3; i++) {
+                    const jointNode = new THREE.Group();
+                    jointNode.position.set(posX, i === 0 ? currentY : lengths[i - 1], 0);
+                    
+                    // Joint sphere (Glow blue)
+                    const jointSphere = new THREE.Mesh(
+                        new THREE.SphereGeometry(0.04, 16, 16),
+                        new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+                    );
+                    jointNode.add(jointSphere);
+
+                    // Bone cylinder (Metallic Silver)
+                    const boneGeo = new THREE.CylinderGeometry(0.025, 0.025, lengths[i], 16);
+                    boneGeo.translate(0, lengths[i] / 2.0, 0);
+                    const boneMesh = new THREE.Mesh(
+                        boneGeo,
+                        new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.7, roughness: 0.2 })
+                    );
+                    jointNode.add(boneMesh);
+
+                    parentNode.add(jointNode);
+                    parentNode = jointNode;
+                    joints.push(jointNode);
+                    
+                    // Shift finger segments outward relative to parent
+                    posX = 0;
                 }
-                
-                armsModel.position.set(0, 0.9, 0);
 
-                armsModel.traverse((child) => {
-                    if (child.isMesh) {
-                        child.material = new THREE.MeshStandardMaterial({
-                            map: armAlbedo,
-                            normalMap: armNormal,
-                            roughness: 0.35,
-                            metalness: 0.05,
-                            side: THREE.DoubleSide
-                        });
+                fingerJoints[name] = joints;
+            }
+
+            // Assemble all 5 fingers onto palm base
+            addRiggedFinger('thumb', 0.2, 0.0, 0.95);
+            addRiggedFinger('index', 0.14, 0.2, 1.0);
+            addRiggedFinger('middle', 0.05, 0.22, 1.05);
+            addRiggedFinger('ring', -0.05, 0.2, 1.0);
+            addRiggedFinger('pinky', -0.14, 0.16, 0.9);
+
+            riggedHandModel.visible = false;
+            scene.add(riggedHandModel);
+        }
+
+        // Flexes finger joints smoothly into the selected GSL posture
+        function applyGslPosture(gestureName) {
+            const posture = GSL_SIGN_POSTURES[gestureName] || GSL_SIGN_POSTURES["OPEN_PALM"];
+            
+            for (let finger in fingerJoints) {
+                const targetRotation = posture[finger] || 0;
+                const joints = fingerJoints[finger];
+
+                // Smoothly flex MCP, PIP, DIP joints using tweening
+                joints.forEach((joint, idx) => {
+                    // Thumb rotates slightly outward for thumbs up / open palm
+                    if (finger === 'thumb') {
+                        joint.rotation.z = -targetRotation * 0.5;
+                        joint.rotation.x = targetRotation * 0.4;
+                    } else {
+                        // Standard fingers flex forward along X axis
+                        joint.rotation.x = targetRotation;
                     }
                 });
-
-                armsModel.visible = false;
-                scene.add(armsModel);
-            }, undefined, function (error) {
-                console.log('Rigged arms loading status:', error);
-            });
-
-            window.addEventListener('resize', onWindowResize);
+            }
         }
 
         function onWindowResize() {
@@ -198,9 +270,9 @@
             
             if (mixer && currentMode === 'FULL_BODY') mixer.update(delta);
             
-            // Continuous breathing motion on Rigged Arms when active
-            if (armsModel && armsModel.visible) {
-                armsModel.position.y = 0.9 + Math.sin(clock.getElapsedTime() * 2.5) * 0.015;
+            // Continuous breathing idle rotation on rigged hand model when active
+            if (riggedHandModel && riggedHandModel.visible) {
+                riggedHandModel.rotation.y = Math.sin(clock.getElapsedTime() * 1.5) * 0.15;
             }
 
             controls.update();
@@ -213,17 +285,30 @@
             if (zoomIn) {
                 if (fullAvatarModel) fullAvatarModel.visible = false;
                 if (groundPedestal) groundPedestal.visible = false;
-                if (armsModel) armsModel.visible = true;
+                if (riggedHandModel) {
+                    riggedHandModel.visible = true;
+                    // Apply current GSL sign pose to 3D hand rig
+                    if (window.currentGestureForHand) {
+                        applyGslPosture(window.currentGestureForHand);
+                    }
+                }
                 
-                camera.position.set(0, 0.9, 1.5);
-                controls.target.set(0, 0.9, 0);
+                camera.position.set(0, 0.7, 1.2);
+                controls.target.set(0, 0.7, 0);
             } else {
-                if (armsModel) armsModel.visible = false;
+                if (riggedHandModel) riggedHandModel.visible = false;
                 if (fullAvatarModel) fullAvatarModel.visible = true;
                 if (groundPedestal) groundPedestal.visible = true;
                 
                 camera.position.set(0, 1.2, 3.0);
                 controls.target.set(0, 1.0, 0);
+            }
+        }
+
+        function setGesture(gestureName) {
+            window.currentGestureForHand = gestureName;
+            if (currentMode === 'ARMS') {
+                applyGslPosture(gestureName);
             }
         }
 

@@ -26,6 +26,7 @@ fun GlbAvatarView(
     }
 
     LaunchedEffect(gestureName) {
+        webViewInstance?.evaluateJavascript("setGesture('$gestureName');", null)
         if (gestureName == "AKWAABA" || gestureName == "WAVE") {
             webViewInstance?.evaluateJavascript("waveHand();", null)
         }
