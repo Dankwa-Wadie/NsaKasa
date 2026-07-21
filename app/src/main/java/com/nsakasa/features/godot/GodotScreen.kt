@@ -127,11 +127,10 @@ fun GodotScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    // Render 3D Character Avatar (avatar.glb) in real time
-                    com.nsakasa.ui.components.Avatar3DVisualizer(
-                        landmarks = currentLandmarks,
-                        gestureName = state.currentGesture,
+                    // Render actual 3D character mesh model (avatar.glb) directly in WebGL 3D Viewport
+                    com.nsakasa.ui.components.GlbAvatarView(
                         isZoomedIn = isZoomedIn,
+                        gestureName = state.currentGesture,
                         modifier = Modifier.fillMaxSize()
                     )
 
