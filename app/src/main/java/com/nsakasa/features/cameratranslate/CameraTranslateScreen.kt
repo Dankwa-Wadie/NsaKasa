@@ -8,6 +8,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,8 +20,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cameraswitch
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -30,7 +35,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -68,6 +75,8 @@ fun CameraTranslateScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
+    var isFrontCamera by remember { mutableStateOf(true) }
+
     LaunchedEffect(cameraPermissionState.status.isGranted) {
         viewModel.setPermissionGranted(cameraPermissionState.status.isGranted)
     }
@@ -98,7 +107,10 @@ fun CameraTranslateScreen(
                     val previewView = PreviewView(ctx).apply {
                         scaleType = PreviewView.ScaleType.FILL_CENTER
                     }
-                    val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
+                    previewView
+                },
+                update = { previewView ->
+                    val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
                     cameraProviderFuture.addListener({
                         val cameraProvider = cameraProviderFuture.get()
                         val preview = Preview.Builder().build().also {
@@ -110,12 +122,16 @@ fun CameraTranslateScreen(
                             .build()
                             .also {
                                 it.setAnalyzer(
-                                    ContextCompat.getMainExecutor(ctx),
+                                    ContextCompat.getMainExecutor(context),
                                     analyzer
                                 )
                             }
 
-                        val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+                        val cameraSelector = if (isFrontCamera) {
+                            CameraSelector.DEFAULT_FRONT_CAMERA
+                        } else {
+                            CameraSelector.DEFAULT_BACK_CAMERA
+                        }
 
                         try {
                             cameraProvider.unbindAll()
@@ -128,59 +144,76 @@ fun CameraTranslateScreen(
                         } catch (e: Exception) {
                             Log.e("CameraTranslateScreen", "Use case binding failed", e)
                         }
-                    }, ContextCompat.getMainExecutor(ctx))
-
-                    previewView
+                    }, ContextCompat.getMainExecutor(context))
                 },
                 modifier = Modifier.fillMaxSize()
             )
 
-            // Real-time Hand Landmark Overlay
+            // Real-time Hand Landmark Overlay with precise aspect-ratio scaling and mirroring
             LandmarkOverlay(
                 landmarkResult = landmarkResult,
+                isFrontCamera = isFrontCamera,
                 modifier = Modifier.fillMaxSize()
             )
 
-            // Status Banner / Top Header for hand tracking feedback
+            // Status Banner & Camera Flip Control
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
                     .background(DarkBackground.copy(alpha = 0.85f))
-                    .padding(16.dp)
+                    .padding(horizontal = 16.dp, vertical = 10.dp)
             ) {
                 val detectedCount = landmarkResult?.hands?.size ?: 0
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = if (detectedCount > 0) "Tracking: $detectedCount hand(s)" else "Nsa Kasa: Place hands in view",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = HighContrastYellow,
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = if (detectedCount > 0) "Tracking: $detectedCount hand(s)" else "Nsa Kasa: Place hands in view",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = HighContrastYellow,
+                            modifier = Modifier.semantics {
+                                contentDescription = "Hand tracking status"
+                            }
+                        )
+                        if (gestureResult.isFake) {
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Surface(
+                                color = HighContrastCyan,
+                                shape = RoundedCornerShape(4.dp)
+                            ) {
+                                Text(
+                                    text = "SIMULATION MODE",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = DarkBackground,
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    // Camera Switch Button (WCAG AA 48x48dp target)
+                    IconButton(
+                        onClick = { isFrontCamera = !isFrontCamera },
                         modifier = Modifier.semantics {
-                            contentDescription = "Hand tracking status"
+                            contentDescription = "Switch between front and back camera"
                         }
-                    )
-                    if (gestureResult.isFake) {
-                        Surface(
-                            color = HighContrastCyan,
-                            shape = RoundedCornerShape(4.dp)
-                        ) {
-                            Text(
-                                text = "MOCK MODE",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = DarkBackground,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Cameraswitch,
+                            contentDescription = null,
+                            tint = HighContrastYellow,
+                            modifier = Modifier.size(32.dp)
+                        )
                     }
                 }
             }
 
-            // Bottom Classification Card (WCAG AA High Contrast Subtitle Display)
+            // Bottom Classification Subtitle Card
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -250,7 +283,7 @@ fun CameraTranslateScreen(
                     .fillMaxSize()
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = "Camera Permission Required",
