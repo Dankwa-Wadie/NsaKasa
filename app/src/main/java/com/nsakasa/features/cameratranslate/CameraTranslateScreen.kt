@@ -8,6 +8,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -157,58 +158,110 @@ fun CameraTranslateScreen(
             )
 
             // Status Banner & Camera Flip Control
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
-                    .background(DarkBackground.copy(alpha = 0.85f))
-                    .padding(horizontal = 16.dp, vertical = 10.dp)
             ) {
-                val detectedCount = landmarkResult?.hands?.size ?: 0
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(DarkBackground.copy(alpha = 0.85f))
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = if (detectedCount > 0) "Tracking: $detectedCount hand(s)" else "Nsa Kasa: Place hands in view",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = HighContrastYellow,
-                            modifier = Modifier.semantics {
-                                contentDescription = "Hand tracking status"
+                    val detectedCount = landmarkResult?.hands?.size ?: 0
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = if (detectedCount > 0) "Tracking: $detectedCount hand(s)" else "Nsa Kasa: Place hands in view",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = HighContrastYellow,
+                                modifier = Modifier.semantics {
+                                    contentDescription = "Hand tracking status"
+                                }
+                            )
+                            if (gestureResult.isFake) {
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Surface(
+                                    color = HighContrastCyan,
+                                    shape = RoundedCornerShape(4.dp)
+                                ) {
+                                    Text(
+                                        text = "SIMULATION MODE",
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = DarkBackground,
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    )
+                                }
                             }
-                        )
-                        if (gestureResult.isFake) {
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Surface(
-                                color = HighContrastCyan,
-                                shape = RoundedCornerShape(4.dp)
+                        }
+
+                        // Camera Switch Button (WCAG AA 48x48dp target)
+                        IconButton(
+                            onClick = { isFrontCamera = !isFrontCamera },
+                            modifier = Modifier.semantics {
+                                contentDescription = "Switch between front and back camera"
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Cameraswitch,
+                                contentDescription = null,
+                                tint = HighContrastYellow,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
+                }
+
+                // Minor Patch & Update Notice Card (Dismissible)
+                var isUpdateBannerDismissed by remember { mutableStateOf(false) }
+                if (!isUpdateBannerDismissed) {
+                    Surface(
+                        color = HighContrastYellow,
+                        shape = RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 12.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.weight(1f)
                             ) {
                                 Text(
-                                    text = "SIMULATION MODE",
-                                    fontSize = 11.sp,
+                                    text = "⚡ UPDATE PATCHED (v1.0.1): Learn mode speech disabled, Godot 3D Avatar & performance fixes applied!",
+                                    fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = DarkBackground,
-                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    lineHeight = 16.sp
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Surface(
+                                color = DarkBackground,
+                                shape = RoundedCornerShape(6.dp),
+                                modifier = Modifier.clickable { isUpdateBannerDismissed = true }
+                            ) {
+                                Text(
+                                    text = "GOT IT",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = HighContrastYellow,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                                 )
                             }
                         }
-                    }
-
-                    // Camera Switch Button (WCAG AA 48x48dp target)
-                    IconButton(
-                        onClick = { isFrontCamera = !isFrontCamera },
-                        modifier = Modifier.semantics {
-                            contentDescription = "Switch between front and back camera"
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Cameraswitch,
-                            contentDescription = null,
-                            tint = HighContrastYellow,
-                            modifier = Modifier.size(32.dp)
-                        )
                     }
                 }
             }
