@@ -8,10 +8,26 @@ import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.nsakasa.core.data.AppDatabase;
+import com.nsakasa.core.data.ConversationDao;
 import com.nsakasa.core.ml.GestureClassifierInterface;
+import com.nsakasa.core.stt.SttManager;
+import com.nsakasa.core.tts.TtsDebouncer;
+import com.nsakasa.core.tts.TtsManager;
+import com.nsakasa.di.DatabaseModule_ProvideAppDatabaseFactory;
+import com.nsakasa.di.DatabaseModule_ProvideConversationDaoFactory;
 import com.nsakasa.di.MlModule_ProvideGestureClassifierFactory;
+import com.nsakasa.di.SttModule_ProvideSttManagerFactory;
+import com.nsakasa.di.TtsModule_ProvideTtsDebouncerFactory;
+import com.nsakasa.di.TtsModule_ProvideTtsManagerFactory;
 import com.nsakasa.features.cameratranslate.CameraTranslateViewModel;
 import com.nsakasa.features.cameratranslate.CameraTranslateViewModel_HiltModules;
+import com.nsakasa.features.conversationlog.ConversationLogViewModel;
+import com.nsakasa.features.conversationlog.ConversationLogViewModel_HiltModules;
+import com.nsakasa.features.settings.SettingsViewModel;
+import com.nsakasa.features.settings.SettingsViewModel_HiltModules;
+import com.nsakasa.features.speechtranslate.SpeechTranslateViewModel;
+import com.nsakasa.features.speechtranslate.SpeechTranslateViewModel_HiltModules;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -360,7 +376,7 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
     }
 
     @Override
-    public void injectMainActivity(MainActivity arg0) {
+    public void injectMainActivity(MainActivity mainActivity) {
     }
 
     @Override
@@ -370,7 +386,7 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
 
     @Override
     public Map<Class<?>, Boolean> getViewModelKeys() {
-      return LazyClassKeyMap.<Boolean>of(ImmutableMap.<String, Boolean>of(LazyClassKeyProvider.com_nsakasa_features_cameratranslate_CameraTranslateViewModel, CameraTranslateViewModel_HiltModules.KeyModule.provide()));
+      return LazyClassKeyMap.<Boolean>of(ImmutableMap.<String, Boolean>of(LazyClassKeyProvider.com_nsakasa_features_cameratranslate_CameraTranslateViewModel, CameraTranslateViewModel_HiltModules.KeyModule.provide(), LazyClassKeyProvider.com_nsakasa_features_conversationlog_ConversationLogViewModel, ConversationLogViewModel_HiltModules.KeyModule.provide(), LazyClassKeyProvider.com_nsakasa_features_settings_SettingsViewModel, SettingsViewModel_HiltModules.KeyModule.provide(), LazyClassKeyProvider.com_nsakasa_features_speechtranslate_SpeechTranslateViewModel, SpeechTranslateViewModel_HiltModules.KeyModule.provide()));
     }
 
     @Override
@@ -392,8 +408,23 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
     private static final class LazyClassKeyProvider {
       static String com_nsakasa_features_cameratranslate_CameraTranslateViewModel = "com.nsakasa.features.cameratranslate.CameraTranslateViewModel";
 
+      static String com_nsakasa_features_speechtranslate_SpeechTranslateViewModel = "com.nsakasa.features.speechtranslate.SpeechTranslateViewModel";
+
+      static String com_nsakasa_features_settings_SettingsViewModel = "com.nsakasa.features.settings.SettingsViewModel";
+
+      static String com_nsakasa_features_conversationlog_ConversationLogViewModel = "com.nsakasa.features.conversationlog.ConversationLogViewModel";
+
       @KeepFieldType
       CameraTranslateViewModel com_nsakasa_features_cameratranslate_CameraTranslateViewModel2;
+
+      @KeepFieldType
+      SpeechTranslateViewModel com_nsakasa_features_speechtranslate_SpeechTranslateViewModel2;
+
+      @KeepFieldType
+      SettingsViewModel com_nsakasa_features_settings_SettingsViewModel2;
+
+      @KeepFieldType
+      ConversationLogViewModel com_nsakasa_features_conversationlog_ConversationLogViewModel2;
     }
   }
 
@@ -405,6 +436,12 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
     private final ViewModelCImpl viewModelCImpl = this;
 
     private Provider<CameraTranslateViewModel> cameraTranslateViewModelProvider;
+
+    private Provider<ConversationLogViewModel> conversationLogViewModelProvider;
+
+    private Provider<SettingsViewModel> settingsViewModelProvider;
+
+    private Provider<SpeechTranslateViewModel> speechTranslateViewModelProvider;
 
     private ViewModelCImpl(SingletonCImpl singletonCImpl,
         ActivityRetainedCImpl activityRetainedCImpl, SavedStateHandle savedStateHandleParam,
@@ -420,11 +457,14 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
     private void initialize(final SavedStateHandle savedStateHandleParam,
         final ViewModelLifecycle viewModelLifecycleParam) {
       this.cameraTranslateViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
+      this.conversationLogViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.settingsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
+      this.speechTranslateViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
     }
 
     @Override
     public Map<Class<?>, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(ImmutableMap.<String, javax.inject.Provider<ViewModel>>of(LazyClassKeyProvider.com_nsakasa_features_cameratranslate_CameraTranslateViewModel, ((Provider) cameraTranslateViewModelProvider)));
+      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(ImmutableMap.<String, javax.inject.Provider<ViewModel>>of(LazyClassKeyProvider.com_nsakasa_features_cameratranslate_CameraTranslateViewModel, ((Provider) cameraTranslateViewModelProvider), LazyClassKeyProvider.com_nsakasa_features_conversationlog_ConversationLogViewModel, ((Provider) conversationLogViewModelProvider), LazyClassKeyProvider.com_nsakasa_features_settings_SettingsViewModel, ((Provider) settingsViewModelProvider), LazyClassKeyProvider.com_nsakasa_features_speechtranslate_SpeechTranslateViewModel, ((Provider) speechTranslateViewModelProvider)));
     }
 
     @Override
@@ -434,10 +474,25 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
+      static String com_nsakasa_features_speechtranslate_SpeechTranslateViewModel = "com.nsakasa.features.speechtranslate.SpeechTranslateViewModel";
+
       static String com_nsakasa_features_cameratranslate_CameraTranslateViewModel = "com.nsakasa.features.cameratranslate.CameraTranslateViewModel";
+
+      static String com_nsakasa_features_conversationlog_ConversationLogViewModel = "com.nsakasa.features.conversationlog.ConversationLogViewModel";
+
+      static String com_nsakasa_features_settings_SettingsViewModel = "com.nsakasa.features.settings.SettingsViewModel";
+
+      @KeepFieldType
+      SpeechTranslateViewModel com_nsakasa_features_speechtranslate_SpeechTranslateViewModel2;
 
       @KeepFieldType
       CameraTranslateViewModel com_nsakasa_features_cameratranslate_CameraTranslateViewModel2;
+
+      @KeepFieldType
+      ConversationLogViewModel com_nsakasa_features_conversationlog_ConversationLogViewModel2;
+
+      @KeepFieldType
+      SettingsViewModel com_nsakasa_features_settings_SettingsViewModel2;
     }
 
     private static final class SwitchingProvider<T> implements Provider<T> {
@@ -462,7 +517,16 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
       public T get() {
         switch (id) {
           case 0: // com.nsakasa.features.cameratranslate.CameraTranslateViewModel 
-          return (T) new CameraTranslateViewModel(singletonCImpl.provideGestureClassifierProvider.get());
+          return (T) new CameraTranslateViewModel(singletonCImpl.provideGestureClassifierProvider.get(), singletonCImpl.provideTtsDebouncerProvider.get(), singletonCImpl.provideConversationDaoProvider.get());
+
+          case 1: // com.nsakasa.features.conversationlog.ConversationLogViewModel 
+          return (T) new ConversationLogViewModel(singletonCImpl.provideConversationDaoProvider.get());
+
+          case 2: // com.nsakasa.features.settings.SettingsViewModel 
+          return (T) new SettingsViewModel(singletonCImpl.provideTtsManagerProvider.get(), singletonCImpl.provideTtsDebouncerProvider.get());
+
+          case 3: // com.nsakasa.features.speechtranslate.SpeechTranslateViewModel 
+          return (T) new SpeechTranslateViewModel(singletonCImpl.provideSttManagerProvider.get(), singletonCImpl.provideConversationDaoProvider.get());
 
           default: throw new AssertionError(id);
         }
@@ -546,6 +610,16 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
 
     private Provider<GestureClassifierInterface> provideGestureClassifierProvider;
 
+    private Provider<TtsManager> provideTtsManagerProvider;
+
+    private Provider<TtsDebouncer> provideTtsDebouncerProvider;
+
+    private Provider<AppDatabase> provideAppDatabaseProvider;
+
+    private Provider<ConversationDao> provideConversationDaoProvider;
+
+    private Provider<SttManager> provideSttManagerProvider;
+
     private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
       this.applicationContextModule = applicationContextModuleParam;
       initialize(applicationContextModuleParam);
@@ -555,10 +629,15 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
     @SuppressWarnings("unchecked")
     private void initialize(final ApplicationContextModule applicationContextModuleParam) {
       this.provideGestureClassifierProvider = DoubleCheck.provider(new SwitchingProvider<GestureClassifierInterface>(singletonCImpl, 0));
+      this.provideTtsManagerProvider = DoubleCheck.provider(new SwitchingProvider<TtsManager>(singletonCImpl, 2));
+      this.provideTtsDebouncerProvider = DoubleCheck.provider(new SwitchingProvider<TtsDebouncer>(singletonCImpl, 1));
+      this.provideAppDatabaseProvider = DoubleCheck.provider(new SwitchingProvider<AppDatabase>(singletonCImpl, 4));
+      this.provideConversationDaoProvider = DoubleCheck.provider(new SwitchingProvider<ConversationDao>(singletonCImpl, 3));
+      this.provideSttManagerProvider = DoubleCheck.provider(new SwitchingProvider<SttManager>(singletonCImpl, 5));
     }
 
     @Override
-    public void injectNsaKasaApp(NsaKasaApp arg0) {
+    public void injectNsaKasaApp(NsaKasaApp nsaKasaApp) {
     }
 
     @Override
@@ -592,6 +671,21 @@ public final class DaggerNsaKasaApp_HiltComponents_SingletonC {
         switch (id) {
           case 0: // com.nsakasa.core.ml.GestureClassifierInterface 
           return (T) MlModule_ProvideGestureClassifierFactory.provideGestureClassifier(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 1: // com.nsakasa.core.tts.TtsDebouncer 
+          return (T) TtsModule_ProvideTtsDebouncerFactory.provideTtsDebouncer(singletonCImpl.provideTtsManagerProvider.get());
+
+          case 2: // com.nsakasa.core.tts.TtsManager 
+          return (T) TtsModule_ProvideTtsManagerFactory.provideTtsManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 3: // com.nsakasa.core.data.ConversationDao 
+          return (T) DatabaseModule_ProvideConversationDaoFactory.provideConversationDao(singletonCImpl.provideAppDatabaseProvider.get());
+
+          case 4: // com.nsakasa.core.data.AppDatabase 
+          return (T) DatabaseModule_ProvideAppDatabaseFactory.provideAppDatabase(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 5: // com.nsakasa.core.stt.SttManager 
+          return (T) SttModule_ProvideSttManagerFactory.provideSttManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);
         }

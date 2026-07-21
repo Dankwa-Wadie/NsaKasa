@@ -1,26 +1,26 @@
 [
     {
-        "merged": "com.nsakasa.app-debug-63:/drawable_ic_launcher_background.xml.flat",
-        "source": "com.nsakasa.app-main-65:/drawable/ic_launcher_background.xml"
+        "merged": "com.nsakasa.app-debug-67:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.nsakasa.app-main-69:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
-        "merged": "com.nsakasa.app-debug-63:/xml_data_extraction_rules.xml.flat",
-        "source": "com.nsakasa.app-main-65:/xml/data_extraction_rules.xml"
+        "merged": "com.nsakasa.app-debug-67:/xml_data_extraction_rules.xml.flat",
+        "source": "com.nsakasa.app-main-69:/xml/data_extraction_rules.xml"
     },
     {
-        "merged": "com.nsakasa.app-debug-63:/xml_backup_rules.xml.flat",
-        "source": "com.nsakasa.app-main-65:/xml/backup_rules.xml"
+        "merged": "com.nsakasa.app-debug-67:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.nsakasa.app-main-69:/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
-        "merged": "com.nsakasa.app-debug-63:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "com.nsakasa.app-main-65:/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "com.nsakasa.app-debug-67:/xml_backup_rules.xml.flat",
+        "source": "com.nsakasa.app-main-69:/xml/backup_rules.xml"
     },
     {
-        "merged": "com.nsakasa.app-debug-63:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "com.nsakasa.app-main-65:/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "com.nsakasa.app-debug-67:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.nsakasa.app-main-69:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "com.nsakasa.app-debug-63:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "com.nsakasa.app-main-65:/drawable/ic_launcher_foreground.xml"
+        "merged": "com.nsakasa.app-debug-67:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.nsakasa.app-main-69:/drawable/ic_launcher_background.xml"
     }
 ]

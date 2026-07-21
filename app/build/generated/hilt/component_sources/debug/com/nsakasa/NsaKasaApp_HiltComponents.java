@@ -1,7 +1,13 @@
 package com.nsakasa;
 
+import com.nsakasa.di.DatabaseModule;
 import com.nsakasa.di.MlModule;
+import com.nsakasa.di.SttModule;
+import com.nsakasa.di.TtsModule;
 import com.nsakasa.features.cameratranslate.CameraTranslateViewModel_HiltModules;
+import com.nsakasa.features.conversationlog.ConversationLogViewModel_HiltModules;
+import com.nsakasa.features.settings.SettingsViewModel_HiltModules;
+import com.nsakasa.features.speechtranslate.SpeechTranslateViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -127,10 +133,13 @@ public final class NsaKasaApp_HiltComponents {
   @Component(
       modules = {
           ApplicationContextModule.class,
+          DatabaseModule.class,
           HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
           MlModule.class,
           ActivityRetainedCBuilderModule.class,
-          ServiceCBuilderModule.class
+          ServiceCBuilderModule.class,
+          SttModule.class,
+          TtsModule.class
       }
   )
   @Singleton
@@ -154,10 +163,13 @@ public final class NsaKasaApp_HiltComponents {
   @Subcomponent(
       modules = {
           CameraTranslateViewModel_HiltModules.KeyModule.class,
+          ConversationLogViewModel_HiltModules.KeyModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
           ActivityCBuilderModule.class,
-          ViewModelCBuilderModule.class
+          ViewModelCBuilderModule.class,
+          SettingsViewModel_HiltModules.KeyModule.class,
+          SpeechTranslateViewModel_HiltModules.KeyModule.class
       }
   )
   @ActivityRetainedScoped
@@ -194,7 +206,10 @@ public final class NsaKasaApp_HiltComponents {
   @Subcomponent(
       modules = {
           CameraTranslateViewModel_HiltModules.BindsModule.class,
-          HiltWrapper_HiltViewModelFactory_ViewModelModule.class
+          ConversationLogViewModel_HiltModules.BindsModule.class,
+          HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
+          SettingsViewModel_HiltModules.BindsModule.class,
+          SpeechTranslateViewModel_HiltModules.BindsModule.class
       }
   )
   @ViewModelScoped
