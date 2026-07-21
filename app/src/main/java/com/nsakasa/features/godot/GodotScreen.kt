@@ -10,8 +10,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.FileUpload
+import androidx.compose.material.icons.filled.Handshake
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ViewInAr
+import androidx.compose.material.icons.filled.ZoomIn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -40,32 +44,36 @@ fun GodotScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
+    var isZoomedIn by remember { mutableStateOf(false) }
+
     val gestures = listOf(
+        "AKWAABA",
+        "THANK_YOU",
+        "LETTER_A",
+        "LETTER_B",
+        "LETTER_C",
         "OPEN_PALM",
         "CLOSED_FIST",
         "POINTING",
-        "THUMBS_UP",
-        "AKWAABA",
-        "LETTER_A",
-        "LETTER_B",
-        "LETTER_C"
+        "THUMBS_UP"
     )
 
     // Maps gesture names to 3D Landmark positions for the 3D Avatar
     val gesturePoses = remember {
         mapOf(
+            "AKWAABA" to GslDataset.allSigns.first { it.id == "gsl_akwaaba" }.landmarks3D,
+            "THANK_YOU" to GslDataset.allSigns.first { it.id == "gsl_thank_you" }.landmarks3D,
+            "LETTER_A" to GslDataset.allSigns.first { it.id == "alpha_a" }.landmarks3D,
+            "LETTER_B" to GslDataset.allSigns.first { it.id == "alpha_b" }.landmarks3D,
+            "LETTER_C" to GslDataset.allSigns.first { it.id == "alpha_c" }.landmarks3D,
             "OPEN_PALM" to GslDataset.allSigns.first { it.id == "gsl_thank_you" }.landmarks3D,
             "CLOSED_FIST" to GslDataset.allSigns.first { it.id == "alpha_s" }.landmarks3D,
             "POINTING" to GslDataset.allSigns.first { it.id == "alpha_d" }.landmarks3D,
-            "THUMBS_UP" to GslDataset.allSigns.first { it.id == "alpha_a" }.landmarks3D,
-            "AKWAABA" to GslDataset.allSigns.first { it.id == "gsl_akwaaba" }.landmarks3D,
-            "LETTER_A" to GslDataset.allSigns.first { it.id == "alpha_a" }.landmarks3D,
-            "LETTER_B" to GslDataset.allSigns.first { it.id == "alpha_b" }.landmarks3D,
-            "LETTER_C" to GslDataset.allSigns.first { it.id == "alpha_c" }.landmarks3D
+            "THUMBS_UP" to GslDataset.allSigns.first { it.id == "alpha_a" }.landmarks3D
         )
     }
 
-    val currentLandmarks = gesturePoses[state.currentGesture] ?: gesturePoses["OPEN_PALM"]!!
+    val currentLandmarks = gesturePoses[state.currentGesture] ?: gesturePoses["AKWAABA"]!!
 
     LaunchedEffect(Unit) {
         viewModel.onEngineStarted()
@@ -104,7 +112,7 @@ fun GodotScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Interactive 3D Avatar Viewport
+            // Interactive 3D Avatar Viewport Card
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -144,11 +152,70 @@ fun GodotScreen(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "3D Avatar (avatar.glb): ${state.currentGesture}",
+                                text = if (isZoomedIn) "🔍 Zoomed to Hands: GSL Learning (${state.currentGesture})" else "3D Avatar Idle Breathing (Wave Greeting Ready)",
                                 color = HighContrastGreen,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             )
+                        }
+                    }
+
+                    // Bottom Camera Zoom Controls Bar
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(12.dp)
+                            .background(DarkBackground.copy(alpha = 0.85f), RoundedCornerShape(12.dp))
+                            .padding(horizontal = 8.dp, vertical = 6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                isZoomedIn = true
+                                viewModel.onGestureSelected("AKWAABA")
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (isZoomedIn) HighContrastYellow else DarkSurface,
+                                contentColor = if (isZoomedIn) DarkBackground else HighContrastYellow
+                            ),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.height(36.dp)
+                        ) {
+                            Icon(Icons.Default.ZoomIn, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Zoom to Hands", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+
+                        Button(
+                            onClick = {
+                                isZoomedIn = false
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (!isZoomedIn) HighContrastYellow else DarkSurface,
+                                contentColor = if (!isZoomedIn) DarkBackground else HighContrastYellow
+                            ),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.height(36.dp)
+                        ) {
+                            Icon(Icons.Default.Person, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Full Body View", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+
+                        Button(
+                            onClick = {
+                                viewModel.onGestureSelected("AKWAABA")
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = DarkSurface,
+                                contentColor = HighContrastCyan
+                            ),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.height(36.dp)
+                        ) {
+                            Icon(Icons.Default.Handshake, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Wave", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -158,7 +225,7 @@ fun GodotScreen(
 
             // Interactive Gesture Trigger Controls
             Text(
-                text = "TRIGGER 3D AVATAR GESTURE",
+                text = "SELECT GSL SIGN TO DEMONSTRATE (AUTO-ZOOM)",
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 color = HighContrastCyan,
@@ -175,7 +242,10 @@ fun GodotScreen(
                 items(gestures) { gesture ->
                     val isSelected = state.currentGesture == gesture
                     Surface(
-                        onClick = { viewModel.onGestureSelected(gesture) },
+                        onClick = {
+                            isZoomedIn = true
+                            viewModel.onGestureSelected(gesture)
+                        },
                         shape = RoundedCornerShape(12.dp),
                         color = if (isSelected) HighContrastYellow else DarkSurface,
                         border = if (isSelected) null else androidx.compose.foundation.BorderStroke(1.dp, HighContrastCyan)
@@ -225,13 +295,13 @@ fun GodotScreen(
                     Spacer(modifier = Modifier.width(10.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Custom 3D Avatar Model (.gltf / .glb)",
+                            text = "Custom 3D Avatar Model (avatar.glb)",
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
                             color = HighContrastYellow
                         )
                         Text(
-                            text = "Place your .gltf, .glb or .pck model in assets/models/ to load custom 3D character rigs.",
+                            text = "Idle breathing & waving initialized. Tapping any GSL sign automatically zooms into the hands to teach GSL.",
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onBackground
                         )
