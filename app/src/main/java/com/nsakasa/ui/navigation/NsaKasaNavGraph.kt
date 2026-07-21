@@ -37,8 +37,16 @@ import com.nsakasa.ui.theme.DarkSurface
 import com.nsakasa.ui.theme.HighContrastCyan
 import com.nsakasa.ui.theme.HighContrastYellow
 
+import androidx.compose.material.icons.filled.School
+import com.nsakasa.features.learn.GslLearnScreen
+
+import androidx.compose.material.icons.filled.ViewInAr
+import com.nsakasa.features.godot.GodotScreen
+
 sealed class Screen(val route: String, val title: String, val icon: ImageVector, val accessibilityLabel: String) {
     object CameraTranslate : Screen("camera_translate", "Gesture", Icons.Default.CameraFront, "Sign language camera translation tab")
+    object GslLearn : Screen("gsl_learn", "Learn", Icons.Default.School, "Learn GSL and test hand guesses tab")
+    object GodotAvatar : Screen("godot_avatar", "3D Avatar", Icons.Default.ViewInAr, "Godot 3D sign language avatar tab")
     object SpeechTranslate : Screen("speech_translate", "Speech", Icons.Default.Mic, "Speech to text reverse translation tab")
     object ConversationLog : Screen("conversation_log", "Log", Icons.Default.History, "Saved conversation history log tab")
     object Settings : Screen("settings", "Settings", Icons.Default.Settings, "Application settings tab")
@@ -52,6 +60,8 @@ fun NsaKasaNavGraph() {
 
     val screens = listOf(
         Screen.CameraTranslate,
+        Screen.GslLearn,
+        Screen.GodotAvatar,
         Screen.SpeechTranslate,
         Screen.ConversationLog,
         Screen.Settings
@@ -115,6 +125,12 @@ fun NsaKasaNavGraph() {
         ) {
             composable(Screen.CameraTranslate.route) {
                 CameraTranslateScreen()
+            }
+            composable(Screen.GslLearn.route) {
+                GslLearnScreen()
+            }
+            composable(Screen.GodotAvatar.route) {
+                GodotScreen()
             }
             composable(Screen.SpeechTranslate.route) {
                 SpeechTranslateScreen()
