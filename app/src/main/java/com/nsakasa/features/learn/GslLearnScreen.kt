@@ -115,6 +115,13 @@ fun GslLearnScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
+    DisposableEffect(Unit) {
+        viewModel.onEnterLearnMode()
+        onDispose {
+            viewModel.onExitLearnMode()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
