@@ -3,9 +3,13 @@ package com.nsakasa.features.godot
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.ViewInAr
 import androidx.compose.material3.*
@@ -20,6 +24,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.nsakasa.core.camera.LandmarkPoint
+import com.nsakasa.features.learn.model.GslDataset
+import com.nsakasa.ui.components.Hand3DVisualizer
+import com.nsakasa.ui.theme.DarkBackground
+import com.nsakasa.ui.theme.DarkSurface
+import com.nsakasa.ui.theme.HighContrastCyan
+import com.nsakasa.ui.theme.HighContrastGreen
+import com.nsakasa.ui.theme.HighContrastYellow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,7 +40,32 @@ fun GodotScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    val sampleGestures = listOf("OPEN_PALM", "CLOSED_FIST", "POINTING", "THUMBS_UP")
+    val gestures = listOf(
+        "OPEN_PALM",
+        "CLOSED_FIST",
+        "POINTING",
+        "THUMBS_UP",
+        "AKWAABA",
+        "LETTER_A",
+        "LETTER_B",
+        "LETTER_C"
+    )
+
+    // Maps gesture names to 3D Landmark positions for the 3D Avatar
+    val gesturePoses = remember {
+        mapOf(
+            "OPEN_PALM" to GslDataset.allSigns.first { it.id == "gsl_thank_you" }.landmarks3D,
+            "CLOSED_FIST" to GslDataset.allSigns.first { it.id == "alpha_s" }.landmarks3D,
+            "POINTING" to GslDataset.allSigns.first { it.id == "alpha_d" }.landmarks3D,
+            "THUMBS_UP" to GslDataset.allSigns.first { it.id == "alpha_a" }.landmarks3D,
+            "AKWAABA" to GslDataset.allSigns.first { it.id == "gsl_akwaaba" }.landmarks3D,
+            "LETTER_A" to GslDataset.allSigns.first { it.id == "alpha_a" }.landmarks3D,
+            "LETTER_B" to GslDataset.allSigns.first { it.id == "alpha_b" }.landmarks3D,
+            "LETTER_C" to GslDataset.allSigns.first { it.id == "alpha_c" }.landmarks3D
+        )
+    }
+
+    val currentLandmarks = gesturePoses[state.currentGesture] ?: gesturePoses["OPEN_PALM"]!!
 
     LaunchedEffect(Unit) {
         viewModel.onEngineStarted()
@@ -42,18 +79,19 @@ fun GodotScreen(
                         Icon(
                             imageVector = Icons.Default.ViewInAr,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = HighContrastYellow,
                             modifier = Modifier.size(28.dp)
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = "Godot 3D Sign Avatar",
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                            color = HighContrastYellow
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    containerColor = DarkSurface
                 )
             )
         }
@@ -61,18 +99,19 @@ fun GodotScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(DarkBackground)
                 .padding(innerPadding)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Godot 3D Viewport Simulation Card
+            // Interactive 3D Avatar Viewport
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF0F172A)
+                    containerColor = DarkSurface
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
             ) {
@@ -80,78 +119,37 @@ fun GodotScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    // Gradient background simulating 3D environment lighting
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.radialGradient(
-                                    colors = listOf(
-                                        Color(0xFF1E293B),
-                                        Color(0xFF0F172A)
-                                    )
-                                )
-                            )
+                    // Render 3D Avatar Pose in real time
+                    Hand3DVisualizer(
+                        landmarks = currentLandmarks,
+                        modifier = Modifier.fillMaxSize(),
+                        autoRotate = true
                     )
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(120.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ViewInAr,
-                                contentDescription = "3D Viewport",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(64.dp)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Text(
-                            text = "Godot Engine 4.3 Viewport",
-                            color = Color.White,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Surface(
-                            shape = RoundedCornerShape(12.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f)
-                        ) {
-                            Text(
-                                text = state.statusMessage,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                fontSize = 14.sp,
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                            )
-                        }
-                    }
-
-                    // Bottom status badge inside 3D viewport
+                    // Top status overlay inside 3D viewport
                     Box(
                         modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(16.dp)
+                            .align(Alignment.TopStart)
+                            .padding(12.dp)
                             .clip(RoundedCornerShape(8.dp))
-                            .background(Color.Black.copy(alpha = 0.6f))
+                            .background(DarkBackground.copy(alpha = 0.85f))
                             .padding(horizontal = 10.dp, vertical = 6.dp)
                     ) {
-                        Text(
-                            text = "Current Gesture: ${state.currentGesture}",
-                            color = Color.Green,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.CheckCircle,
+                                contentDescription = null,
+                                tint = HighContrastGreen,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "3D Avatar (avatar.glb): ${state.currentGesture}",
+                                color = HighContrastGreen,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
             }
@@ -160,35 +158,84 @@ fun GodotScreen(
 
             // Interactive Gesture Trigger Controls
             Text(
-                text = "Trigger 3D Avatar Sign Gesture",
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                text = "TRIGGER 3D AVATAR GESTURE",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = HighContrastCyan,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Start
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Row(
+            LazyRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                sampleGestures.forEach { gesture ->
+                items(gestures) { gesture ->
                     val isSelected = state.currentGesture == gesture
-                    FilterChip(
-                        selected = isSelected,
+                    Surface(
                         onClick = { viewModel.onGestureSelected(gesture) },
-                        label = { Text(gesture.replace("_", " ")) },
-                        leadingIcon = if (isSelected) {
-                            {
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (isSelected) HighContrastYellow else DarkSurface,
+                        border = if (isSelected) null else androidx.compose.foundation.BorderStroke(1.dp, HighContrastCyan)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
+                        ) {
+                            if (isSelected) {
                                 Icon(
                                     imageVector = Icons.Default.PlayArrow,
                                     contentDescription = null,
+                                    tint = DarkBackground,
                                     modifier = Modifier.size(16.dp)
                                 )
+                                Spacer(modifier = Modifier.width(4.dp))
                             }
-                        } else null,
-                        modifier = Modifier.weight(1f)
+                            Text(
+                                text = gesture.replace("_", " "),
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isSelected) DarkBackground else HighContrastCyan
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Custom 3D Model Upload Notice Card
+            Card(
+                colors = CardDefaults.cardColors(containerColor = DarkSurface),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.FileUpload,
+                        contentDescription = null,
+                        tint = HighContrastYellow,
+                        modifier = Modifier.size(24.dp)
                     )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Custom 3D Avatar Model (.gltf / .glb)",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = HighContrastYellow
+                        )
+                        Text(
+                            text = "Place your .gltf, .glb or .pck model in assets/models/ to load custom 3D character rigs.",
+                            fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
                 }
             }
         }
