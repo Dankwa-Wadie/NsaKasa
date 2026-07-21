@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.nsakasa.core.camera.HandLandmarkResult
 import com.nsakasa.ui.theme.ConnectionLineColor
 import com.nsakasa.ui.theme.JointPointColor
+import kotlin.math.max
 
 /**
  * 21 Hand Connections according to MediaPipe Hand Landmarker model topology.
@@ -32,6 +33,7 @@ private val HAND_CONNECTIONS = listOf(
 @Composable
 fun LandmarkOverlay(
     landmarkResult: HandLandmarkResult?,
+    isFrontCamera: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     Canvas(modifier = modifier.fillMaxSize()) {
@@ -40,17 +42,33 @@ fun LandmarkOverlay(
         val canvasWidth = size.width
         val canvasHeight = size.height
 
+        val imgWidth = landmarkResult.inputWidth.toFloat().takeIf { it > 0 } ?: canvasWidth
+        val imgHeight = landmarkResult.inputHeight.toFloat().takeIf { it > 0 } ?: canvasHeight
+
+        // Precise FILL_CENTER scaling transformation (matching CameraX PreviewView FILL_CENTER)
+        val scale = max(canvasWidth / imgWidth, canvasHeight / imgHeight)
+        val scaledWidth = imgWidth * scale
+        val scaledHeight = imgHeight * scale
+        val offsetX = (canvasWidth - scaledWidth) / 2f
+        val offsetY = (canvasHeight - scaledHeight) / 2f
+
         for (hand in landmarkResult.hands) {
             val points = hand.points
             if (points.size < 21) continue
 
+            // Compute pixel offsets with aspect-ratio cropping and front-camera mirroring
+            val pixelPoints = points.map { pt ->
+                val normX = if (isFrontCamera) 1.0f - pt.x else pt.x
+                Offset(
+                    x = normX * scaledWidth + offsetX,
+                    y = pt.y * scaledHeight + offsetY
+                )
+            }
+
             // Draw connection lines
             for (connection in HAND_CONNECTIONS) {
-                val startPoint = points[connection.first]
-                val endPoint = points[connection.second]
-
-                val startPx = Offset(startPoint.x * canvasWidth, startPoint.y * canvasHeight)
-                val endPx = Offset(endPoint.x * canvasWidth, endPoint.y * canvasHeight)
+                val startPx = pixelPoints[connection.first]
+                val endPx = pixelPoints[connection.second]
 
                 drawLine(
                     color = ConnectionLineColor,
@@ -62,8 +80,7 @@ fun LandmarkOverlay(
             }
 
             // Draw joint landmark dots
-            for (point in points) {
-                val jointPx = Offset(point.x * canvasWidth, point.y * canvasHeight)
+            for (jointPx in pixelPoints) {
                 drawCircle(
                     color = JointPointColor,
                     radius = 7.dp.toPx(),
