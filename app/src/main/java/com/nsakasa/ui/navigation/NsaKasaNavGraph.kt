@@ -3,6 +3,7 @@ package com.nsakasa.ui.navigation
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraFront
 import androidx.compose.material.icons.filled.History
@@ -43,10 +44,13 @@ import com.nsakasa.features.learn.GslLearnScreen
 import androidx.compose.material.icons.filled.ViewInAr
 import com.nsakasa.features.godot.GodotScreen
 
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.style.TextOverflow
+
 sealed class Screen(val route: String, val title: String, val icon: ImageVector, val accessibilityLabel: String) {
     object CameraTranslate : Screen("camera_translate", "Gesture", Icons.Default.CameraFront, "Sign language camera translation tab")
     object GslLearn : Screen("gsl_learn", "Learn", Icons.Default.School, "Learn GSL and test hand guesses tab")
-    object GodotAvatar : Screen("godot_avatar", "3D Avatar", Icons.Default.ViewInAr, "Godot 3D sign language avatar tab")
+    object GodotAvatar : Screen("godot_avatar", "Avatar", Icons.Default.ViewInAr, "Godot 3D sign language avatar tab")
     object SpeechTranslate : Screen("speech_translate", "Speech", Icons.Default.Mic, "Speech to text reverse translation tab")
     object ConversationLog : Screen("conversation_log", "Log", Icons.Default.History, "Saved conversation history log tab")
     object Settings : Screen("settings", "Settings", Icons.Default.Settings, "Application settings tab")
@@ -67,17 +71,41 @@ fun NsaKasaNavGraph() {
         Screen.Settings
     )
 
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+
+    // Dynamic responsive sizing based on device screen width
+    val labelFontSize = when {
+        screenWidth < 360 -> 9.5.sp
+        screenWidth < 400 -> 10.5.sp
+        screenWidth < 440 -> 11.5.sp
+        else -> 12.5.sp
+    }
+
+    val iconSize = when {
+        screenWidth < 360 -> 20.dp
+        screenWidth < 400 -> 22.dp
+        else -> 24.dp
+    }
+
+    val navBarHeight = when {
+        screenWidth < 360 -> 64.dp
+        else -> 72.dp
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             NavigationBar(
                 containerColor = DarkSurface,
-                modifier = Modifier.height(72.dp)
+                modifier = Modifier.height(navBarHeight),
+                windowInsets = androidx.compose.foundation.layout.WindowInsets(0.dp)
             ) {
                 screens.forEach { screen ->
                     val selected = currentRoute == screen.route
                     NavigationBarItem(
                         selected = selected,
+                        alwaysShowLabel = true,
                         onClick = {
                             if (currentRoute != screen.route) {
                                 navController.navigate(screen.route) {
@@ -93,14 +121,17 @@ fun NsaKasaNavGraph() {
                             Icon(
                                 imageVector = screen.icon,
                                 contentDescription = null,
-                                modifier = Modifier.padding(bottom = 2.dp)
+                                modifier = Modifier.size(iconSize)
                             )
                         },
                         label = {
                             Text(
                                 text = screen.title,
-                                fontSize = 14.sp,
-                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
+                                fontSize = labelFontSize,
+                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                                maxLines = 1,
+                                softWrap = false,
+                                overflow = TextOverflow.Ellipsis
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(
